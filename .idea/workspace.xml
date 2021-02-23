@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="428925a6-7017-4093-8908-bd4414be723e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/query/log.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/query/query.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/root/root.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/version/version.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/log/uplogAPI.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/util/timestamp.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KodoLog/kodo_log/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/../KodoLog/kodo_log/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KodoLog/kodo_log/query.go" beforeDir="false" afterPath="$PROJECT_DIR$/../KodoLog/kodo_log/query.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/.idea/cmd.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../cmd/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../cmd/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/cmd" beforeDir="false" afterPath="$PROJECT_DIR$/../cmd/cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/colorprint.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/command.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/demo/CmdDemo" beforeDir="false" afterPath="$PROJECT_DIR$/../cmd/demo/CmdDemo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/demo/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/../cmd/demo/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/demo/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/../cmd/demo/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/demo/query.go" beforeDir="false" afterPath="$PROJECT_DIR$/../cmd/demo/query.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/demo/root.go" beforeDir="false" afterPath="$PROJECT_DIR$/../cmd/demo/root.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/go.mod" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cmd/output.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/closing-channels/closing-channels.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/closing-channels/closing-channels.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/go-linkname/cat-inter/cat.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/go-linkname/cat-inter/cat.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/go-linkname/cat/cat.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/go-linkname/cat/cat.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/go-linkname/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/go-linkname/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/goroutines/goroutines.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/goroutines/goroutines.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/curl/http3_transport.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/curl/transport.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/go.mod" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/c-callback.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/callback.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/callback.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/const.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/const_gen.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/core.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/core_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/darwin/libcrypto.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/darwin/libcurl.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/darwin/libquiche.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/darwin/libssl.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/easy.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/easy_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/include/curl.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/include/curlver.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/include/easy.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/include/mprintf.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/include/multi.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/include/stdcheaders.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/include/system.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/include/typecheck-gcc.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/include/urlapi.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/linux/libcrypto.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/linux/libcurl.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/linux/libquiche.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/linux/libssl.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/logging.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/logging_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/multi.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/resource/cacert.pem" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/curl/libcurl/share.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/go.mod" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/go.sum" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/http-transport/http-transport.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/non-blocking-channel-operations/non-blocking-channel-operations.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/non-blocking-channel-operations/non-blocking-channel-operations.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/non-blocking-channel-operations/non-blocking-channel-operations.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/non-blocking-channel-operations/non-blocking-channel-operations.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/random-numbers/random-numbers.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/random-numbers/random-numbers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/random-numbers/random-numbers.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/random-numbers/random-numbers.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/range-over-channels/range-over-channels.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/range-over-channels/range-over-channels.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/range-over-channels/range-over-channels.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/range-over-channels/range-over-channels.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/range/range.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/range/range.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/range/range.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/range/range.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/rate-limiting/rate-limiting.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/rate-limiting/rate-limiting.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/regular-expressions/regular-expressions.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/regular-expressions/regular-expressions.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/select/select.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/select/select.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/sorting-by-functions/sorting-by-functions.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/sorting-by-functions/sorting-by-functions.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test/examples/spawning-processes/spawning-processes.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test/examples/spawning-processes/spawning-processes.go" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" path="/usr/local/Cellar/go/1.15.5/libexec" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1osABbRD2wMtWaLTtfHBpooCU8R" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="last_opened_file_path" value="$USER_HOME$" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/core" />
+      <recent name="$PROJECT_DIR$/cmd/query" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="go build root/" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="Kodo" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <kind value="DIRECTORY" />
+      <directory value="$PROJECT_DIR$/cmd/root" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Build.go build root/" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
