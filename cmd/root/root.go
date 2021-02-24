@@ -1,23 +1,22 @@
 package root
 
 import (
-	"github.com/YangSen-qn/Kodo/cmd/query"
+	"github.com/YangSen-qn/Kodo/cmd/uplog"
 	"github.com/YangSen-qn/Kodo/cmd/version"
-	"github.com/YangSen-qn/cmd"
+	"github.com/spf13/cobra"
 )
 
-var rootCMD = (&cmd.CommandBuilder{
-	Use:                    "cmd",
-	Short:                  "just a demo",
-	Version:                "0.0.1",
-	BashCompletionFulsnction: "",
-}).Build()
-
-func init() {
-	query.ConfigQueryCMD(rootCMD)
-	version.ConfigVersionCMD(rootCMD)
+var rootCMD = &cobra.Command{
+	Use:        "kodo",
+	Short:      "my kodo command",
+	Long:       "",
+	Example:    "",
+	Version:    version.Version,
 }
 
-func loadCMD() error {
-	return rootCMD.Run()
+
+func LoadCMD() error {
+	version.ConfigVersionCMD(rootCMD)
+	uplog.ConfigLogCMD(rootCMD)
+	return rootCMD.Execute()
 }

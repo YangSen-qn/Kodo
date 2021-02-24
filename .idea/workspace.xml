@@ -2,19 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="428925a6-7017-4093-8908-bd4414be723e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/query/log.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/query/query.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/root/root.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/version/version.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/log/uplogAPI.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/util/timestamp.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/uplog/cmd_log.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/uplog/data.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/uplog/output.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/common/handler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/log/data.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/log/param.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/log/result.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/log/result_item.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/log/result_version.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/query/log.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/query/query.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/root/root.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/root/root.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/version/version.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/version/version.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/log/uplogAPI.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/util/timestamp.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/util/timestamp.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../KodoLog/kodo_log/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/../KodoLog/kodo_log/config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../KodoLog/kodo_log/query.go" beforeDir="false" afterPath="$PROJECT_DIR$/../KodoLog/kodo_log/query.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../cmd/.idea/.gitignore" beforeDir="false" />
@@ -105,21 +112,28 @@
   </component>
   <component name="GOROOT" path="/usr/local/Cellar/go/1.15.5/libexec" />
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
   </component>
   <component name="ProjectId" id="1osABbRD2wMtWaLTtfHBpooCU8R" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="configurable.Global.GOPATH.is.expanded" value="true" />
+    <property name="configurable.Module.GOPATH.is.expanded" value="false" />
+    <property name="configurable.Project.GOPATH.is.expanded" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="last_opened_file_path" value="$USER_HOME$" />
+    <property name="settings.editor.selected.configurable" value="go.sdk" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/core" />
       <recent name="$PROJECT_DIR$/cmd/query" />
+      <recent name="$PROJECT_DIR$/core" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -134,7 +148,14 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Go Build.go build main.go">
+    <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="Kodo" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/main.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="go build root/" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="Kodo" />
       <working_directory value="$PROJECT_DIR$/" />
@@ -144,6 +165,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build main.go" />
         <item itemvalue="Go Build.go build root/" />
       </list>
     </recent_temporary>
@@ -161,5 +183,8 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
   </component>
 </project>
