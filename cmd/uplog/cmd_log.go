@@ -153,9 +153,7 @@ func (performer *logCMDPerformer) querySomeVersion(paramList []*log.QueryParam, 
 	var allVersionLogCount int = 0
 	resultVersionList := [] *log.QueryResultVersion{}
 	for _, param := range paramList {
-		resultVersion := log.QueryVersion(param, types, func(progressInfo string) {
-
-		})
+		resultVersion := log.QueryVersion(param, types)
 		allVersionLogCount += resultVersion.TotalCount()
 		resultVersionList = append(resultVersionList, resultVersion)
 

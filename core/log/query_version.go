@@ -1,9 +1,5 @@
 package log
 
-import (
-	"github.com/YangSen-qn/Kodo/core/common"
-)
-
 func QueryByQueryString(param *QueryParam) (result *QueryResult, err error) {
 	if len(param.QueryString) == 0 {
 		return
@@ -12,7 +8,7 @@ func QueryByQueryString(param *QueryParam) (result *QueryResult, err error) {
 	return queryByPart(param)
 }
 
-func QueryVersion(param *QueryParam, types []string, progress common.ProgressHandler) *QueryResultVersion {
+func QueryVersion(param *QueryParam, types []string) *QueryResultVersion {
 
 	param.check()
 
