@@ -84,6 +84,9 @@ func queryInfoSeparateByPage(param *QueryParam, partResultChan chan<- *QueryResu
 		partIndex++
 		result, err := queryPartInfoByParam(partIndex, "10m", param)
 		if result != nil {
+			if result.itemList == nil || len(result.itemList) == 0 {
+				break
+			}
 			partResultChan <- result
 		}
 		if err != nil {
@@ -132,8 +135,20 @@ func queryPartInfoByParam(partIndex int, scroll string, param *QueryParam) (resu
 
 	var itemList []*QueryResultItem = nil
 	if len(logOutput.Data) > 0 {
-		itemList = make([]*QueryResultItem, logOutput.Total)
-
+		itemList = make([]*QueryResultItem, 0, len(logOutput.Data))
+		for _, itemData := range logOutput.Data {
+			item := &QueryResultItem{}
+			if itemData["remote_ip"] != nil {
+				item.IP = itemData["remote_ip"].(string)
+			}
+			if itemData["isp"] != nil {
+				item.ISP = itemData["isp"].(string)
+			}
+			if itemData["city"] != nil {
+				item.City = itemData["city"].(string)
+			}
+			itemList = append(itemList, item)
+		}
 	}
 
 	result = &QueryResult{

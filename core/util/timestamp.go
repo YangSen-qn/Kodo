@@ -10,7 +10,7 @@ func GetDateStringWithTimestamp(timestamp int64) string {
 }
 
 func GetTimestampByStringWithDefaultFormat(timeString string) int64 {
-	return GetTimestampByString(timeString, "2006-01-02 03:04:05")
+	return GetTimestampByString(timeString, "2006-01-02 15:04:05")
 }
 
 func GetTimestampByString(timeString string, format string) int64 {

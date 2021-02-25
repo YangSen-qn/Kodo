@@ -20,6 +20,16 @@ type networkCMDPerformer struct {
 	sk              string
 }
 
+func Test() {
+	p := &networkCMDPerformer{
+		androidEnable:   false,
+		sdkVersion:      "8.1.2",
+		startTimeString: "2021-02-25 10:10:10",
+		endTimeString:   "2021-02-25 18:30:10",
+	}
+	p.execute(nil, nil)
+}
+
 func ConfigNetworkSlowCMD(superCMD *cobra.Command) {
 
 	performer := &networkCMDPerformer{}
