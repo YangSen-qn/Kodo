@@ -24,11 +24,11 @@ type logCMDPerformer struct {
 	sk              string
 }
 
-func ConfigLogCMD(superCMD *cobra.Command) {
+func ConfigCMD(superCMD *cobra.Command) {
 
 	performer := &logCMDPerformer{}
 
-	logCMD := &cobra.Command{
+	cmd := &cobra.Command{
 		Use:     "uplog",
 		Short:   "query uplog",
 		Long:    "",
@@ -36,8 +36,8 @@ func ConfigLogCMD(superCMD *cobra.Command) {
 		Run:     performer.execute,
 	}
 
-	bindLogCMDToPerformer(logCMD, performer)
-	superCMD.AddCommand(logCMD)
+	bindLogCMDToPerformer(cmd, performer)
+	superCMD.AddCommand(cmd)
 }
 
 func bindLogCMDToPerformer(command *cobra.Command, performer *logCMDPerformer) {

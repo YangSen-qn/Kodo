@@ -2,6 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="428925a6-7017-4093-8908-bd4414be723e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/split/cmd.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/util/split_string.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/root/root.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/root/root.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/uplog/cmd_log.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/uplog/cmd_log.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/version/version.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/version/cmd.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../KodoLog/kodo_log/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/../KodoLog/kodo_log/config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../KodoLog/kodo_log/query.go" beforeDir="false" afterPath="$PROJECT_DIR$/../KodoLog/kodo_log/query.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../cmd/.idea/.gitignore" beforeDir="false" />
@@ -101,6 +108,7 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="configurable.Global.GOPATH.is.expanded" value="true" />
     <property name="configurable.Module.GOPATH.is.expanded" value="false" />

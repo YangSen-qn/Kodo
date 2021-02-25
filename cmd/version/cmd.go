@@ -8,7 +8,7 @@ import (
 
 const Version = "v1.0.0"
 
-func ConfigVersionCMD(superCMD *cobra.Command) {
+func ConfigCMD(superCMD *cobra.Command) {
 
 	cmd := &cobra.Command{
 		Use:     "version",

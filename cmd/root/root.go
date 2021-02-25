@@ -1,6 +1,7 @@
 package root
 
 import (
+	"github.com/YangSen-qn/Kodo/cmd/split"
 	"github.com/YangSen-qn/Kodo/cmd/uplog"
 	"github.com/YangSen-qn/Kodo/cmd/version"
 	"github.com/spf13/cobra"
@@ -16,7 +17,8 @@ var rootCMD = &cobra.Command{
 
 
 func LoadCMD() error {
-	version.ConfigVersionCMD(rootCMD)
-	uplog.ConfigLogCMD(rootCMD)
+	version.ConfigCMD(rootCMD)
+	uplog.ConfigCMD(rootCMD)
+	split.ConfigCMD(rootCMD)
 	return rootCMD.Execute()
 }
