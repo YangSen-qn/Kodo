@@ -97,5 +97,15 @@ func QueryTypeQueryString(sdkVersion string, sdkType int, typeList []string) str
 		}
 	}
 	typeQueryString += ")"
-	return QS_LogVersion4 + QS_And + QS_LogTypeQuality + QS_And + typeQueryString + QS_And + agentAndVersion + QS_And + defaultContent
+
+	typeQueryString = QS_LogVersion4 + QS_And + QS_LogTypeQuality + QS_And + typeQueryString
+
+	if len(agentAndVersion) > 0 {
+		typeQueryString += QS_And + agentAndVersion
+	}
+	if len(defaultContent) > 0 {
+		typeQueryString += QS_And + defaultContent
+	}
+
+	return typeQueryString
 }

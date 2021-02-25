@@ -5,7 +5,7 @@ func QueryByQueryString(param *QueryParam) (result *QueryResult, err error) {
 		return
 	}
 	param.check()
-	return queryByPart(param)
+	return queryCountSeparateByDuration(param)
 }
 
 func QueryVersion(param *QueryParam, types []string) *QueryResultVersion {
@@ -51,6 +51,6 @@ func QueryVersion(param *QueryParam, types []string) *QueryResultVersion {
 
 func queryVersionTypeByParam(param *QueryParam, typeString []string, count chan int) {
 	param.QueryString = QueryTypeQueryString(param.SDKVersion, param.SDKType, typeString)
-	result, _ := queryByPart(param)
+	result, _ := queryCountSeparateByDuration(param)
 	count <- result.totalCount
 }

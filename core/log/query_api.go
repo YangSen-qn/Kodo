@@ -1,13 +1,16 @@
 package log
 
 import (
+	"fmt"
+	"strconv"
 	"time"
 
 	. "github.com/qiniu/pandora-go-sdk/base"
 	. "github.com/qiniu/pandora-go-sdk/logdb"
 )
 
-func queryByPart(param *QueryParam) (result *QueryResult, err error) {
+func queryCountSeparateByDuration(param *QueryParam) (result *QueryResult, err error) {
+	partQueryInfo := *param
 
 	result = &QueryResult{
 		totalCount: 0,
@@ -16,7 +19,7 @@ func queryByPart(param *QueryParam) (result *QueryResult, err error) {
 
 	var partEndTime int64 = 0
 	for partStartTime := param.StartTime; partEndTime < param.EndTime; {
-		partQueryInfo := param
+		partQueryInfo := partQueryInfo
 
 		partEndTime = partStartTime + 4*3600*1000
 		if partEndTime > param.EndTime {
@@ -25,9 +28,11 @@ func queryByPart(param *QueryParam) (result *QueryResult, err error) {
 
 		partQueryInfo.StartTime = partStartTime
 		partQueryInfo.EndTime = partEndTime
-		partResult, e := queryByParam(param)
+		partResult, e := queryCountByParam(partQueryInfo)
 		err = e
-		result.addResult(partResult)
+		if partResult != nil {
+			result.addResult(partResult)
+		}
 
 		partStartTime = partEndTime
 	}
@@ -35,7 +40,7 @@ func queryByPart(param *QueryParam) (result *QueryResult, err error) {
 	return
 }
 
-func queryByParam(param *QueryParam) (result *QueryResult, err error) {
+func queryCountByParam(param QueryParam) (result *QueryResult, err error) {
 
 	cfg := NewConfig().
 		WithEndpoint(logDBEndPoint).
@@ -68,6 +73,72 @@ func queryByParam(param *QueryParam) (result *QueryResult, err error) {
 	result = &QueryResult{
 		totalCount: logOutput.Total,
 		itemList:   nil,
+	}
+
+	return
+}
+
+func queryInfoSeparateByPage(param *QueryParam, partResultChan chan<- *QueryResult, errorResultChan chan<- error) {
+	partIndex := 0
+	for {
+		partIndex++
+		result, err := queryPartInfoByParam(partIndex, "10m", param)
+		if result != nil {
+			partResultChan <- result
+		}
+		if err != nil {
+			errorResultChan <- err
+		}
+	}
+	return
+}
+
+func queryPartInfoByParam(partIndex int, scroll string, param *QueryParam) (result *QueryResult, err error) {
+
+	cfg := NewConfig().
+		WithEndpoint(logDBEndPoint).
+		WithAccessKeySecretKey(param.AK, param.SK).
+		WithLogger(NewDefaultLogger()).
+		WithLoggerLevel(LogDebug).
+		WithDialTimeout(180 * time.Second).
+		WithResponseTimeout(180 * time.Second)
+
+	client, err := New(cfg);
+	if err != nil {
+		return
+	}
+
+	startTime := strconv.Itoa(int(param.StartTime))
+	endTime := strconv.Itoa(int(param.EndTime))
+	queryString := fmt.Sprintf("up_time:>%s AND up_time:<%s AND %s", startTime, endTime, param.QueryString)
+	logInput := &QueryLogInput{
+		RepoName:  param.RepoName,
+		Query:     queryString,
+		Sort:      "up_time:asc",
+		From:      partIndex,
+		Size:      10,
+		Scroll:    scroll,
+		Highlight: nil,
+	}
+	logOutput, err := client.QueryLog(logInput)
+
+	fmt.Println("query string:", queryString)
+	if err != nil {
+		fmt.Println("error:", err)
+		return
+	}
+
+	fmt.Println(logOutput)
+
+	var itemList []*QueryResultItem = nil
+	if len(logOutput.Data) > 0 {
+		itemList = make([]*QueryResultItem, logOutput.Total)
+
+	}
+
+	result = &QueryResult{
+		totalCount: logOutput.Total,
+		itemList:   itemList,
 	}
 
 	return
