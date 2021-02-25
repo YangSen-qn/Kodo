@@ -1,7 +1,6 @@
 package util
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 	"os"
@@ -26,19 +25,19 @@ func SplitFromFile(filePath string, separator string, partResult chan<- string, 
 	}
 	defer file.Close()
 
-	leftString := "" // 上一行遗留
-	buf := bufio.NewReader(file)
+	leftString := ""
+	buf := make([]byte, 1024)
 	for {
-		line, err := buf.ReadString('\n')
-		if err != nil {
-			if err != io.EOF {
-				errorResult <- err
-			}
+		n, err := file.Read(buf)
+		if err != nil && err != io.EOF {
+			errorResult <- err
+			break
+		}
+		if n == 0 {
 			break
 		}
 
-		line = strings.TrimSpace(line)
-		leftString = leftString + line
+		leftString = leftString + string(buf)
 		stringList := Split(leftString, separator)
 		listLength := len(stringList)
 		for i, s := range stringList {
