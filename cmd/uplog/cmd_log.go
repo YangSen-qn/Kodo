@@ -167,6 +167,6 @@ func (performer *logCMDPerformer) querySomeVersion(paramList []*log.QueryParam, 
 		fileName = strings.ReplaceAll(fileName, "-", "")
 		fileName = strings.ReplaceAll(fileName, " ", "")
 		fileName = strings.ReplaceAll(fileName, ":", "")
-		saveToLocalAsExcel(filepath.Join(performer.excelDir, fileName), paramList[0].GetSDKName(), allVersionLogCount, resultVersionList, types)
+		saveVersionToLocalAsExcel(filepath.Join(performer.excelDir, fileName), paramList[0].GetSDKName(), allVersionLogCount, resultVersionList, types)
 	}
 }

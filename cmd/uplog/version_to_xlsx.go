@@ -43,7 +43,7 @@ type excelCell struct {
 	cellHeight float64
 }
 
-func saveToLocalAsExcel(fileName string, sdkName string, allVersionLogCount int, versionList [] *log.QueryResultVersion, types []string) {
+func saveVersionToLocalAsExcel(fileName string, sdkName string, allVersionLogCount int, versionList [] *log.QueryResultVersion, types []string) {
 
 	if versionList == nil || len(versionList) == 0 {
 		return

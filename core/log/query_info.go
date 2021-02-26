@@ -3,7 +3,7 @@ package log
 import "fmt"
 
 func QueryNetworkSlowInfo(param *QueryParam, partResultChan chan<- *QueryResult, errorResultChan chan<- error) {
-	param.QueryString = QueryTypeQueryString(param.SDKVersion, param.SDKType, []string{QS_ResultNetworkSlow})
+	param.QueryString = QueryTypeQueryString(param.SDKVersion, param.SDKType, []string{QS_ResultTimeout})
 	fmt.Println("query string a:", param.QueryString)
 	QueryInfo(param, partResultChan, errorResultChan)
 }

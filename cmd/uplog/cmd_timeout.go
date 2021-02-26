@@ -5,6 +5,8 @@ import (
 	"github.com/YangSen-qn/Kodo/core/log"
 	"github.com/YangSen-qn/Kodo/core/util"
 	"github.com/spf13/cobra"
+	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -20,23 +22,13 @@ type networkCMDPerformer struct {
 	sk              string
 }
 
-func Test() {
-	p := &networkCMDPerformer{
-		androidEnable:   false,
-		sdkVersion:      "8.1.2",
-		startTimeString: "2021-02-25 10:10:10",
-		endTimeString:   "2021-02-25 18:30:10",
-	}
-	p.execute(nil, nil)
-}
-
 func ConfigNetworkSlowCMD(superCMD *cobra.Command) {
 
 	performer := &networkCMDPerformer{}
 
 	cmd := &cobra.Command{
-		Use:     "network",
-		Short:   "network slow",
+		Use:     "timeout",
+		Short:   "get timeout error info",
 		Long:    "",
 		Example: "",
 		Run:     performer.execute,
@@ -61,13 +53,7 @@ func bindNetworkCMDToPerformer(command *cobra.Command, performer *networkCMDPerf
 func (performer *networkCMDPerformer) execute(cmd *cobra.Command, args []string) {
 	performer.sdkVersion = strings.ReplaceAll(performer.sdkVersion, " ", "")
 	if len(performer.sdkVersion) == 0 {
-		if performer.iOSEnable && performer.androidEnable {
-			performer.sdkVersion = iOSAndAndroidAllVersion
-		} else if performer.iOSEnable {
-			performer.sdkVersion = iOSAllVersion
-		} else if performer.androidEnable {
-			performer.sdkVersion = androidAllVersion
-		}
+		performer.sdkVersion = allTimeoutVersion
 	}
 
 	var startTime, endTime int64
@@ -101,14 +87,43 @@ func (performer *networkCMDPerformer) queryByQueryString(startTime, endTime int6
 	partResultChan := make(chan *log.QueryResult)
 	errorResultChan := make(chan error)
 
-	log.QueryNetworkSlowInfo(param, partResultChan, errorResultChan)
+	go log.QueryNetworkSlowInfo(param, partResultChan, errorResultChan)
 
+	itemsInfo := make(map[string]*log.QueryResultItem)
+	index := 0
 	for partResult := range partResultChan {
 		if partResult.AllItems() == nil || len(partResult.AllItems()) == 0 {
 			continue
 		}
 		for _, item := range partResult.AllItems() {
-			output.InfoStringFormat("item:", item)
+
+			if len(item.IP) > 0 {
+				oldItem := itemsInfo[item.IP]
+				if oldItem == nil {
+					oldItem = item
+					itemsInfo[oldItem.IP] = oldItem
+				} else {
+					oldItem.Count += 1
+				}
+			}
+
+			index++
+			output.InfoStringFormat("item:%s index:%d\n", item, index)
 		}
+
+	}
+
+	items := make([]*log.QueryResultItem, 0, len(itemsInfo))
+
+	for _, value := range itemsInfo {
+		items = append(items, value)
+	}
+
+	sort.Slice(items, func(i, j int) bool {
+		return items[i].Count > items[j].Count
+	})
+
+	if len(performer.excelDir) > 0 {
+		saveResultItemsToLocalAsExcel(filepath.Join(performer.excelDir, "timeout.xlsx"), items)
 	}
 }

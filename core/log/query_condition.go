@@ -87,6 +87,8 @@ func QueryTypeQueryString(sdkVersion string, sdkType int, typeList []string) str
 	} else if sdkType == SDKTypeIOS {
 		defaultContent = QS_iOSDefault
 		agentAndVersion = fmt.Sprintf(QS_FormatiOSSDKVersion, sdkVersion)
+	} else {
+		defaultContent = "sdk_version:" + sdkVersion
 	}
 
 	typeQueryString := "("

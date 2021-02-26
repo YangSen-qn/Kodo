@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"github.com/qiniu/pandora-go-sdk/base/config"
 	"strconv"
 	"time"
 
@@ -79,26 +80,16 @@ func queryCountByParam(param QueryParam) (result *QueryResult, err error) {
 }
 
 func queryInfoSeparateByPage(param *QueryParam, partResultChan chan<- *QueryResult, errorResultChan chan<- error) {
-	partIndex := 0
-	for {
-		partIndex++
-		result, err := queryPartInfoByParam(partIndex, "10m", param)
-		if result != nil {
-			if result.itemList == nil || len(result.itemList) == 0 {
-				break
-			}
-			partResultChan <- result
-		}
-		if err != nil {
-			errorResultChan <- err
-		}
-	}
-	return
-}
+	defer func() {
+		close(partResultChan)
+		close(errorResultChan)
+	}()
 
-func queryPartInfoByParam(partIndex int, scroll string, param *QueryParam) (result *QueryResult, err error) {
+	startTime := strconv.Itoa(int(param.StartTime))
+	endTime := strconv.Itoa(int(param.EndTime))
+	param.QueryString = fmt.Sprintf("up_time:>%s AND up_time:<%s AND %s", startTime, endTime, param.QueryString)
 
-	cfg := NewConfig().
+	config := NewConfig().
 		WithEndpoint(logDBEndPoint).
 		WithAccessKeySecretKey(param.AK, param.SK).
 		WithLogger(NewDefaultLogger()).
@@ -106,43 +97,94 @@ func queryPartInfoByParam(partIndex int, scroll string, param *QueryParam) (resu
 		WithDialTimeout(180 * time.Second).
 		WithResponseTimeout(180 * time.Second)
 
-	client, err := New(cfg);
+	count := 0
+	scrollId, partResult, err := queryPartInfoInitByParam(param, config)
+	if partResult != nil {
+		if partResult.itemList != nil && len(partResult.itemList) > 0 {
+			count += len(partResult.AllItems())
+			partResultChan <- partResult
+		}
+	}
+
+	for {
+		scrollId, partResult, err = queryLeftPartInfoByParam(scrollId, param, config)
+		if partResult != nil {
+			if partResult.itemList == nil || len(partResult.itemList) == 0 {
+				break
+			}
+			count += len(partResult.AllItems())
+			partResultChan <- partResult
+		}
+		if err != nil {
+			errorResultChan <- err
+			break
+		}
+		if count >= partResult.totalCount {
+			break
+		}
+	}
+	return
+}
+
+func queryPartInfoInitByParam(param *QueryParam, config *config.Config) (scrollId string, result *QueryResult, err error) {
+	client, err := New(config);
 	if err != nil {
 		return
 	}
 
-	startTime := strconv.Itoa(int(param.StartTime))
-	endTime := strconv.Itoa(int(param.EndTime))
-	queryString := fmt.Sprintf("up_time:>%s AND up_time:<%s AND %s", startTime, endTime, param.QueryString)
 	logInput := &QueryLogInput{
 		RepoName:  param.RepoName,
-		Query:     queryString,
+		Query:     param.QueryString,
 		Sort:      "up_time:asc",
-		From:      partIndex,
+		From:      0,
 		Size:      10,
-		Scroll:    scroll,
+		Scroll:    "10m",
 		Highlight: nil,
 	}
 	logOutput, err := client.QueryLog(logInput)
 
-	fmt.Println("query string:", queryString)
+	scrollId = logOutput.ScrollId
+	result = queryInfoOutputToResult(logOutput)
+
+	return
+}
+
+func queryLeftPartInfoByParam(scrollId string, param *QueryParam, config *config.Config) (newScrollId string, result *QueryResult, err error) {
+	client, err := New(config);
 	if err != nil {
-		fmt.Println("error:", err)
 		return
 	}
 
-	fmt.Println(logOutput)
+	logInput := &QueryScrollInput{
+		RepoName: param.RepoName,
+		Scroll:   "10m",
+		ScrollId: scrollId,
+	}
+	logOutput, err := client.QueryScroll(logInput)
 
+	newScrollId = logOutput.ScrollId
+	result = queryInfoOutputToResult(logOutput)
+
+	return
+}
+
+func queryInfoOutputToResult(logOutput *QueryLogOutput) *QueryResult {
 	var itemList []*QueryResultItem = nil
 	if len(logOutput.Data) > 0 {
 		itemList = make([]*QueryResultItem, 0, len(logOutput.Data))
 		for _, itemData := range logOutput.Data {
-			item := &QueryResultItem{}
-			if itemData["remote_ip"] != nil {
-				item.IP = itemData["remote_ip"].(string)
+			item := &QueryResultItem{Count:1}
+			if itemData["user_ip"] != nil {
+				item.IP = itemData["user_ip"].(string)
 			}
 			if itemData["isp"] != nil {
 				item.ISP = itemData["isp"].(string)
+			}
+			if itemData["country"] != nil {
+				item.Country = itemData["country"].(string)
+			}
+			if itemData["region"] != nil {
+				item.Region = itemData["region"].(string)
 			}
 			if itemData["city"] != nil {
 				item.City = itemData["city"].(string)
@@ -151,10 +193,8 @@ func queryPartInfoByParam(partIndex int, scroll string, param *QueryParam) (resu
 		}
 	}
 
-	result = &QueryResult{
+	return &QueryResult{
 		totalCount: logOutput.Total,
 		itemList:   itemList,
 	}
-
-	return
 }
