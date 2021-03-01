@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-type networkCMDPerformer struct {
+type timeoutCMDPerformer struct {
 	excelDir        string
 	iOSEnable       bool
 	androidEnable   bool
@@ -22,9 +22,9 @@ type networkCMDPerformer struct {
 	sk              string
 }
 
-func ConfigNetworkSlowCMD(superCMD *cobra.Command) {
+func ConfigTimeoutCMD(superCMD *cobra.Command) {
 
-	performer := &networkCMDPerformer{}
+	performer := &timeoutCMDPerformer{}
 
 	cmd := &cobra.Command{
 		Use:     "timeout",
@@ -38,7 +38,7 @@ func ConfigNetworkSlowCMD(superCMD *cobra.Command) {
 	superCMD.AddCommand(cmd)
 }
 
-func bindNetworkCMDToPerformer(command *cobra.Command, performer *networkCMDPerformer) {
+func bindNetworkCMDToPerformer(command *cobra.Command, performer *timeoutCMDPerformer) {
 	command.Flags().StringVarP(&performer.excelDir, "save-file", "o", "", "query result save dir")
 	command.Flags().BoolVarP(&performer.iOSEnable, "iOS", "", false, "query iOS result, query iOS And Android if both iOS And Android not set")
 	command.Flags().BoolVarP(&performer.androidEnable, "Android", "", false, "query Android result, query iOS And Android if both iOS And Android not set")
@@ -50,7 +50,7 @@ func bindNetworkCMDToPerformer(command *cobra.Command, performer *networkCMDPerf
 	command.Flags().StringVarP(&performer.sk, "sk", "", "", "user secret key, default use kodo when not set")
 }
 
-func (performer *networkCMDPerformer) execute(cmd *cobra.Command, args []string) {
+func (performer *timeoutCMDPerformer) execute(cmd *cobra.Command, args []string) {
 	performer.sdkVersion = strings.ReplaceAll(performer.sdkVersion, " ", "")
 	if len(performer.sdkVersion) == 0 {
 		performer.sdkVersion = allTimeoutVersion
@@ -73,7 +73,7 @@ func (performer *networkCMDPerformer) execute(cmd *cobra.Command, args []string)
 	performer.queryByQueryString(startTime, endTime)
 }
 
-func (performer *networkCMDPerformer) queryByQueryString(startTime, endTime int64) {
+func (performer *timeoutCMDPerformer) queryByQueryString(startTime, endTime int64) {
 	param := &log.QueryParam{
 		SDKType:    0,
 		SDKVersion: performer.sdkVersion,
@@ -124,6 +124,9 @@ func (performer *networkCMDPerformer) queryByQueryString(startTime, endTime int6
 	})
 
 	if len(performer.excelDir) > 0 {
-		saveResultItemsToLocalAsExcel(filepath.Join(performer.excelDir, "timeout.xlsx"), items)
+		err := saveResultItemsToLocalAsExcel(filepath.Join(performer.excelDir, "timeout.xlsx"), items)
+		if err != nil {
+			output.InfoStringFormat("save error:%s", err)
+		}
 	}
 }

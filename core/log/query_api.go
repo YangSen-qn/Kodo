@@ -137,7 +137,7 @@ func queryPartInfoInitByParam(param *QueryParam, config *config.Config) (scrollI
 		Query:     param.QueryString,
 		Sort:      "up_time:asc",
 		From:      0,
-		Size:      10,
+		Size:      20,
 		Scroll:    "10m",
 		Highlight: nil,
 	}

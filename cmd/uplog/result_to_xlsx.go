@@ -1,7 +1,7 @@
 package uplog
 
 import (
-	"github.com/YangSen-qn/Kodo/cmd/excel/excel"
+	"github.com/YangSen-qn/Kodo/cmd/excel"
 	"github.com/YangSen-qn/Kodo/core/log"
 )
 
@@ -17,10 +17,10 @@ var (
 	resultSheetContentStyle *excel.CellStyle
 )
 
-func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem) {
+func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem) error {
 
 	if items == nil || len(items) == 0 {
-		return
+		return nil
 	}
 
 	sheet := excel.NewSheet(fileName, "Sheet1")
@@ -59,9 +59,7 @@ func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem
 		}
 	}
 
-	err := sheet.SaveAs(fileName);
-	if err != nil {
-	}
+	return sheet.SaveAs(fileName)
 }
 
 func configResultSheet(sheet *excel.Sheet) {
@@ -73,7 +71,9 @@ func configResultSheet(sheet *excel.Sheet) {
 			excel.SizeOption(14), ),
 		excel.AlignmentStyle(excel.HorizontalOption(excel.StringCenter),
 			excel.VerticalOption(excel.StringCenter)),
-		excel.FillStyle(excel.ColorsOption("#0000FF")))
+		excel.FillStyle(excel.TypeOption(excel.StringPattern),
+			excel.ColorsOption("#FFFF88"),
+			excel.PatternOption(1)))
 	_ = sheet.AddCellStyle(resultSheetTitleStyle)
 
 	resultSheetContentStyle = excel.NewCellStyle()

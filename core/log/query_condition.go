@@ -3,6 +3,7 @@ package log
 
 import (
 	"fmt"
+	"strings"
 )
 
 const (
@@ -87,8 +88,11 @@ func QueryTypeQueryString(sdkVersion string, sdkType int, typeList []string) str
 	} else if sdkType == SDKTypeIOS {
 		defaultContent = QS_iOSDefault
 		agentAndVersion = fmt.Sprintf(QS_FormatiOSSDKVersion, sdkVersion)
-	} else {
-		defaultContent = "sdk_version:" + sdkVersion
+	} else if len(sdkVersion) > 0 {
+		//"8.1.2,8.2.0" "(sdk_version:8.1.2 OR sdk_version:8.2.0)"
+		versionList := strings.Split(sdkVersion, ",")
+		defaultContent = strings.Join(versionList, " OR sdk_version:")
+		defaultContent = fmt.Sprintf("(sdk_version:%s)", defaultContent)
 	}
 
 	typeQueryString := "("

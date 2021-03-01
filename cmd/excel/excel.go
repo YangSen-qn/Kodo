@@ -1,6 +1,7 @@
 package excel
 
 import (
+	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"strconv"
 )
@@ -35,6 +36,7 @@ func NewSheet(filePath string, name string) *Sheet {
 
 	file, err := excelize.OpenFile(filePath)
 	if err != nil {
+		fmt.Println("open error:", err)
 		file = excelize.NewFile()
 	}
 

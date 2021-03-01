@@ -19,7 +19,7 @@ var rootCMD = &cobra.Command{
 func LoadCMD() error {
 	version.ConfigCMD(rootCMD)
 	uplog.ConfigCMD(rootCMD)
-	uplog.ConfigNetworkSlowCMD(rootCMD)
+	uplog.ConfigTimeoutCMD(rootCMD)
 	split.ConfigCMD(rootCMD)
 	return rootCMD.Execute()
 }

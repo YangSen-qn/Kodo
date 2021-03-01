@@ -108,15 +108,15 @@ func AlignmentStyle(options ...Option) Style {
 
 // fill style
 func PatternOption(pattern int) Option {
-	return Option(fmt.Sprintf(`"pattern":"%d"`, pattern))
+	return Option(fmt.Sprintf(`"pattern":%d`, pattern))
 }
 
 const (
 	StringPattern Option = "pattern"
 )
 
-func TypeOption(alignment string) Option {
-	return Option(fmt.Sprintf(`"type":"%s"`, alignment))
+func TypeOption(typeOption Option) Option {
+	return Option(fmt.Sprintf(`"type":"%s"`, typeOption))
 }
 
 func FillStyle(options ...Option) Style {
