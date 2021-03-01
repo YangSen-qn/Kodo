@@ -87,7 +87,7 @@ func (performer *timeoutCMDPerformer) queryByQueryString(startTime, endTime int6
 	partResultChan := make(chan *log.QueryResult)
 	errorResultChan := make(chan error)
 
-	go log.QueryNetworkSlowInfo(param, partResultChan, errorResultChan)
+	go log.QueryInfoOfCannotConnectToServer(param, partResultChan, errorResultChan)
 
 	itemsInfo := make(map[string]*log.QueryResultItem)
 	index := 0
