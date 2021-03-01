@@ -2,11 +2,8 @@ package uplog
 
 import (
 	"fmt"
+	"github.com/YangSen-qn/Kodo/cmd/excel"
 	"github.com/YangSen-qn/Kodo/core/log"
-	"os"
-	"strconv"
-
-	"github.com/360EntSecGroup-Skylar/excelize/v2"
 )
 
 const (
@@ -25,23 +22,12 @@ const (
 )
 
 var (
-	emptyCellStyleId   int = -1
-	titleCellStyleId   int = -1
-	nameCellStyleId    int = -1
-	countCellStyleId   int = -1
-	percentCellStyleId int = -1
+	emptyCellStyle   *excel.CellStyle
+	titleCellStyle   *excel.CellStyle
+	nameCellStyle    *excel.CellStyle
+	countCellStyle   *excel.CellStyle
+	percentCellStyle *excel.CellStyle
 )
-
-type excelCell struct {
-	sheet      string
-	typeId     int
-	row        int
-	column     string
-	value      interface{}
-	styleId    int
-	cellWidth  float64
-	cellHeight float64
-}
 
 func saveVersionToLocalAsExcel(fileName string, sdkName string, allVersionLogCount int, versionList [] *log.QueryResultVersion, types []string) {
 
@@ -50,238 +36,138 @@ func saveVersionToLocalAsExcel(fileName string, sdkName string, allVersionLogCou
 	}
 
 	sheetName := sdkName
-	file, err := excelize.OpenFile(fileName)
-	if err != nil {
-		file = excelize.NewFile()
-	}
-	configFile(file)
 
 	// 删除无用的Sheet1
-	if file.GetSheetIndex("Sheet1") > -1 {
-		file.DeleteSheet("Sheet1")
-	}
+	excel.DeleteSheet(fileName, "Sheet1")
+	excel.DeleteSheet(fileName, sheetName)
 
-	if file.GetSheetIndex(sheetName) > 0 {
-		file.DeleteSheet(sheetName)
-	}
-	file.NewSheet(sheetName)
+	sheet := excel.NewSheet(fileName, sheetName)
+	configVersionSheet(sheet)
 
 	for i, sdkVersionInfo := range versionList {
 
 		sdkVersion := sdkVersionInfo.Version()
 
-		// 头
 		row := 1
-		column := i*3 + i
+		columnStart := i*3 + i
+
+		// 头
+		column := columnStart + 1
 		totalPercent := log.CalculatePercent(sdkVersionInfo.TotalCount(), allVersionLogCount)
-		tileCell0 := newCell(excelCellTypeEmpty, sheetName, row, getExcelCellColumnString(column), "");
-		column++
-		tileCell1 := newCell(excelCellTypeTitle, sheetName, row, getExcelCellColumnString(column), sdkName+" "+sdkVersion+"("+percentToString(totalPercent)+")");
-		column++
-		tileCell2 := newCell(excelCellTypeTitle, sheetName, row, getExcelCellColumnString(column), "");
-		column++
-		tileCell3 := newCell(excelCellTypeTitle, sheetName, row, getExcelCellColumnString(column), "");
-		column++
-		setCellValue(file, tileCell0)
-		setCellValue(file, tileCell1)
-		setCellValue(file, tileCell2)
-		setCellValue(file, tileCell3)
-		err = file.MergeCell(sheetName, excelCellAxis(tileCell1), excelCellAxis(tileCell3))
-		if err != nil {
+		versionDescription := sdkName + " " + sdkVersion + "(" + percentToString(totalPercent) + ")"
+		_ = sheet.SetCell(newCell(excelCellTypeEmpty, row, columnStart, ""))
+		_ = sheet.SetCell(newCell(excelCellTypeTitle, row, column, versionDescription))
+		_ = sheet.MergeCell(column, row, column+2, row)
+
+		// total success dns
+		nameList := []string{sdkVersion + " totalCount", sdkVersion + " successCount", sdkVersion + " dnsErrorCount"}
+		countList := []interface{}{sdkVersionInfo.TotalCount(), sdkVersionInfo.SuccessCount(), sdkVersionInfo.DnsErrorCount()}
+		percentList := []float64{-1, sdkVersionInfo.SuccessPercent(), sdkVersionInfo.DnsErrorPercent()}
+		for j := 0; j < len(nameList); j++ {
+			row++
+			_ = sheet.SetCell(newCell(excelCellTypeEmpty, row, columnStart, ""))
+			_ = sheet.SetCell(newCell(excelCellTypeName, row, columnStart+1, nameList[j]))
+			_ = sheet.SetCell(newCell(excelCellTypeCount, row, columnStart+2, countList[j]))
+			if percentList[j] >= 0 {
+				_ = sheet.SetCell(newCell(excelCellTypePercent, row, columnStart+3, percentToString(percentList[j])))
+			}
 		}
 
-		// 总量
-		row += 1
-		column = i*3 + i
-		setCellValue(file, newCell(excelCellTypeEmpty, sheetName, row, getExcelCellColumnString(column), ""));
-		column++
-		setCellValue(file, newCell(excelCellTypeName, sheetName, row, getExcelCellColumnString(column), sdkVersion+" totalCount"));
-		column++
-		setCellValue(file, newCell(excelCellTypeCount, sheetName, row, getExcelCellColumnString(column), sdkVersionInfo.TotalCount()));
-		column++
-
-		// 成功数据
-		row += 1
-		column = i*3 + i
-		setCellValue(file, newCell(excelCellTypeEmpty, sheetName, row, getExcelCellColumnString(column), ""));
-		column++
-		setCellValue(file, newCell(excelCellTypeName, sheetName, row, getExcelCellColumnString(column), sdkVersion+" successCount"));
-		column++
-		setCellValue(file, newCell(excelCellTypeCount, sheetName, row, getExcelCellColumnString(column), sdkVersionInfo.SuccessCount()));
-		column++
-		setCellValue(file, newCell(excelCellTypePercent, sheetName, row, getExcelCellColumnString(column), percentToString(sdkVersionInfo.SuccessPercent())));
-		column++
-
-		// dns 数据
-		row += 1
-		column = i*3 + i
-		setCellValue(file, newCell(excelCellTypeEmpty, sheetName, row, getExcelCellColumnString(column), ""));
-		column++
-		setCellValue(file, newCell(excelCellTypeName, sheetName, row, getExcelCellColumnString(column), sdkVersion+" dnsErrorCount"));
-		column++
-		setCellValue(file, newCell(excelCellTypeCount, sheetName, row, getExcelCellColumnString(column), sdkVersionInfo.DnsErrorCount()));
-		column++
-		setCellValue(file, newCell(excelCellTypePercent, sheetName, row, getExcelCellColumnString(column), percentToString(sdkVersionInfo.DnsErrorPercent())));
-		column++
-
+		// other type
 		for _, key := range types {
 			value := sdkVersionInfo.TypeInfo(key)
 			percent := sdkVersionInfo.TypeInfoPercent(value)
 
-			row += 1
-			column = i*3 + i
-			setCellValue(file, newCell(excelCellTypeEmpty, sheetName, row, getExcelCellColumnString(column), ""));
-			column++
-			setCellValue(file, newCell(excelCellTypeName, sheetName, row, getExcelCellColumnString(column), sdkVersion+" "+key));
-			column++
-			setCellValue(file, newCell(excelCellTypeCount, sheetName, row, getExcelCellColumnString(column), value.TotalCount()));
-			column++
-			setCellValue(file, newCell(excelCellTypePercent, sheetName, row, getExcelCellColumnString(column), percentToString(percent)));
-			column++
+			row++
+			column = columnStart
+			_ = sheet.SetCell(newCell(excelCellTypeEmpty, row, columnStart, ""))
+			_ = sheet.SetCell(newCell(excelCellTypeName, row, columnStart+1, sdkVersion+" "+key))
+			_ = sheet.SetCell(newCell(excelCellTypeCount, row, columnStart+2, value.TotalCount()))
+			_ = sheet.SetCell(newCell(excelCellTypePercent, row, columnStart+3, percentToString(percent)))
 		}
 	}
 
-	err = file.SaveAs(fileName);
+	err := sheet.SaveAs(fileName);
 	if err != nil {
 	}
 }
 
-func configFile(file *excelize.File) {
-	fontStyle := `"font":{"bold":false,"italic":true,"family":"Times","size":14,"color":"#777777"}`
-	boldFontStyle := `"font":{"bold":true,"italic":true,"family":"Times","size":14,"color":"#777777"}`
-	leftAlignmentStyle := `"alignment":{"horizontal":"left","Vertical":"center"}`
-	centerAlignmentStyle := `"alignment":{"horizontal":"center","Vertical":"center"}`
-	rightAlignmentStyle := `"alignment":{"horizontal":"right","Vertical":"center"}`
-	borderStyle := `"border":[{"type":"left","color":"FF0000","style":1}, {"type":"top","color":"FF0000","style":1}, {"type":"right","color":"FF0000","style":1}, {"type":"bottom","color":"FF0000","style":1}]`
-	yellowFillStyle := `"fill":{"type":"pattern","color":["#FFFF88"],"pattern":1}`
+func configVersionSheet(sheet *excel.Sheet) {
 
-	var err error
-	titleCellStyleId, err = file.NewStyle("{" + boldFontStyle + "," + centerAlignmentStyle + "," + borderStyle + "," + yellowFillStyle + "}")
-	nameCellStyleId, err = file.NewStyle("{" + fontStyle + "," + leftAlignmentStyle + "}")
-	countCellStyleId, err = file.NewStyle("{" + fontStyle + "," + rightAlignmentStyle + "}")
-	percentCellStyleId, err = file.NewStyle("{" + fontStyle + "," + rightAlignmentStyle + "}")
+	titleCellStyle = excel.NewCellStyle()
+	titleCellStyle.SetCellStyle(
+		excel.FontStyle(excel.BoldOption(true),
+			excel.ItalicOption(true),
+			excel.FamilyOption(excel.StringTimes),
+			excel.ColorOption("#777777"),
+			excel.SizeOption(14), ),
+		excel.AlignmentStyle(excel.HorizontalOption(excel.StringCenter),
+			excel.VerticalOption(excel.StringCenter)),
+		excel.FillStyle(excel.TypeOption(excel.StringPattern),
+			excel.ColorsOption("#FFFF88"),
+			excel.PatternOption(1)))
+	_ = sheet.AddCellStyle(titleCellStyle)
 
-	if err != nil {
-	}
+	nameCellStyle = excel.NewCellStyle()
+	nameCellStyle.SetCellStyle(
+		excel.FontStyle(excel.ItalicOption(true),
+			excel.FamilyOption(excel.StringTimes),
+			excel.ColorOption("#777777"),
+			excel.SizeOption(14), ),
+		excel.AlignmentStyle(excel.HorizontalOption(excel.StringLeft),
+			excel.VerticalOption(excel.StringCenter)))
+	_ = sheet.AddCellStyle(nameCellStyle)
+
+	countCellStyle = excel.NewCellStyle()
+	countCellStyle.SetCellStyle(
+		excel.FontStyle(excel.ItalicOption(true),
+			excel.FamilyOption(excel.StringTimes),
+			excel.ColorOption("#777777"),
+			excel.SizeOption(14), ),
+		excel.AlignmentStyle(excel.HorizontalOption(excel.StringRight),
+			excel.VerticalOption(excel.StringCenter)))
+	_ = sheet.AddCellStyle(countCellStyle)
+
+	percentCellStyle = countCellStyle
 }
 
-func newCell(typeId int, sheet string, row int, column string, value interface{}) *excelCell {
+func newCell(typeId int, row int, column int, value interface{}) *excel.Cell {
 
-	styleId := -1
+	var style *excel.CellStyle = nil
+
 	cellWidth := 0.0
 	cellHeight := 0.0
 	if typeId == excelCellTypeEmpty {
-		styleId = emptyCellStyleId
 		cellWidth = emptyCellWidth
 		cellHeight = defaultCellHeight
 	} else if typeId == excelCellTypeTitle {
-		styleId = titleCellStyleId
+		style = titleCellStyle
 		cellWidth = titleCellWidth
 		cellHeight = defaultCellHeight
 	} else if typeId == excelCellTypeName {
-		styleId = nameCellStyleId
+		style = nameCellStyle
 		cellWidth = nameCellWidth
 		cellHeight = defaultCellHeight
 	} else if typeId == excelCellTypeCount {
-		styleId = countCellStyleId
+		style = countCellStyle
 		cellWidth = countCellWidth
 		cellHeight = defaultCellHeight
 	} else {
-		styleId = percentCellStyleId
+		style = percentCellStyle
 		cellWidth = percentCellWidth
 		cellHeight = defaultCellHeight
 	}
 
-	return &excelCell{
-		sheet:      sheet,
-		typeId:     typeId,
-		row:        row,
-		column:     column,
-		value:      value,
-		styleId:    styleId,
-		cellWidth:  cellWidth,
-		cellHeight: cellHeight,
+	return &excel.Cell{
+		Row:    row,
+		Column: column,
+		Value:  value,
+		Style:  style,
+		Width:  cellWidth,
+		Height: cellHeight,
 	}
-}
-
-func excelCellAxis(cell *excelCell) string {
-	return cell.column + strconv.Itoa(cell.row)
-}
-
-func setCellValue(file *excelize.File, cell *excelCell) {
-	var err error
-
-	axis := excelCellAxis(cell)
-	if stringValue, ok := cell.value.(string); ok {
-		err = file.SetCellValue(cell.sheet, axis, stringValue)
-	} else if intValue, ok := cell.value.(int); ok {
-		err = file.SetCellInt(cell.sheet, axis, intValue)
-	} else if float64Value, ok := cell.value.(float64); ok {
-		err = file.SetCellFloat(cell.sheet, axis, float64Value, 4, 32)
-	} else if float32Value, ok := cell.value.(float32); ok {
-		err = file.SetCellFloat(cell.sheet, axis, float64(float32Value), 4, 32)
-	}
-
-	if err == nil {
-		err = file.SetRowHeight(cell.sheet, cell.row, cell.cellHeight)
-	}
-
-	if err == nil {
-		err = file.SetColWidth(cell.sheet, cell.column, cell.column, cell.cellWidth)
-	}
-
-	if err == nil && cell.styleId > 0 {
-		err = file.SetCellStyle(cell.sheet, axis, axis, cell.styleId)
-	}
-
-	if err != nil {
-	}
-}
-
-func getExcelCellColumnString(column int) string {
-
-	cellColumnBase := []string{
-		"A", "B", "C", "D", "E", "F",
-		"G", "H", "I", "J", "K", "L",
-		"M", "N", "O", "P", "Q", "R",
-		"S", "T", "U", "V", "W", "X",
-		"Y", "Z"}
-
-	columnString := cellColumnBase[column%len(cellColumnBase)]
-	for column >= len(cellColumnBase) {
-		column = column/len(cellColumnBase) - 1
-		columnString = cellColumnBase[column%len(cellColumnBase)] + columnString
-	}
-
-	return columnString
 }
 
 func percentToString(percent float64) string {
 	return fmt.Sprintf("%.4f%%", percent*100)
-}
-
-// 判断所给路径文件/文件夹是否存在
-func exists(path string) bool {
-	_, err := os.Stat(path) //os.Stat获取文件信息
-	if err != nil {
-		if os.IsExist(err) {
-			return true
-		}
-		return false
-	}
-	return true
-}
-
-// 判断所给路径是否为文件夹
-func isDir(path string) bool {
-	s, err := os.Stat(path)
-	if err != nil {
-		return false
-	}
-	return s.IsDir()
-}
-
-// 判断所给路径是否为文件
-func isFile(path string) bool {
-	return !isDir(path)
 }

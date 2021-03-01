@@ -1,7 +1,6 @@
 package excel
 
 import (
-	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"strconv"
 )
@@ -36,7 +35,6 @@ func NewSheet(filePath string, name string) *Sheet {
 
 	file, err := excelize.OpenFile(filePath)
 	if err != nil {
-		fmt.Println("open error:", err)
 		file = excelize.NewFile()
 	}
 
@@ -47,6 +45,21 @@ func NewSheet(filePath string, name string) *Sheet {
 	return &Sheet{
 		file: file,
 		name: name,
+	}
+}
+
+func DeleteSheet(filePath string, name string) {
+	if len(name) == 0 {
+		name = "Sheet1"
+	}
+
+	file, err := excelize.OpenFile(filePath)
+	if err != nil {
+		return
+	}
+
+	if file.GetSheetIndex(name) >= 0 {
+		file.DeleteSheet(name)
 	}
 }
 
@@ -69,14 +82,20 @@ func (sheet *Sheet) SetCell(cell *Cell) error {
 		err = sheet.file.SetColWidth(sheet.name, column, column, cell.Width)
 	}
 	if err == nil {
-		sheet.file.SetRowHeight(sheet.name, cell.Row, cell.Height)
+		err = sheet.file.SetRowHeight(sheet.name, cell.Row, cell.Height)
 	}
 
-	if err == nil && cell.Style.id > 0 {
+	if err == nil && cell.Style != nil && cell.Style.id > 0 {
 		err = sheet.file.SetCellStyle(sheet.name, axis, axis, cell.Style.id)
 	}
 
 	return err
+}
+
+func (sheet *Sheet) MergeCell(fromColumn, fromRow, toColumn, toRow int) error {
+	fromAxis := getExcelCellColumnString(fromColumn) + strconv.Itoa(fromRow)
+	toAxis := getExcelCellColumnString(toColumn) + strconv.Itoa(toRow)
+	return sheet.file.MergeCell(sheet.name, fromAxis, toAxis)
 }
 
 func (sheet *Sheet) AddCellStyle(style *CellStyle) error {
