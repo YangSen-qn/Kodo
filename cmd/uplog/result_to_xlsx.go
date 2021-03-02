@@ -53,7 +53,7 @@ func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem
 		remoteNetworkType := item.RemoteNetworkType()
 		itemInfo := []interface{}{item.City, item.Region, item.Country, remoteNetworkType, item.RemoteIP, item.Host, item.IP, item.Count}
 
-		widthList := []float64{8, 8, 8, 17, 25, 20, 25, 8}
+		widthList := []float64{15, 8, 8, 17, 25, 20, 25, 8}
 		for v, title := range itemInfo {
 			titleCell := &excel.Cell{
 				Row:    row,
@@ -69,6 +69,8 @@ func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem
 		if lastItemID != id {
 			if len(lastItemID) != 0 && row != (lastItemIDFirstRow+1) {
 				_ = sheet.MergeCell(0, lastItemIDFirstRow, 0, row-1)
+				_ = sheet.MergeCell(1, lastItemIDFirstRow, 1, row-1)
+				_ = sheet.MergeCell(2, lastItemIDFirstRow, 2, row-1)
 				_ = sheet.SetCellStyle(0, lastItemIDFirstRow, len(titleList)-1, row-1, getNextContentBgStyle())
 			} else {
 				_ = sheet.SetCellStyle(0, lastItemIDFirstRow, len(titleList)-1, row-1, getNextContentBgStyle())
