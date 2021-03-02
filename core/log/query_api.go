@@ -189,6 +189,12 @@ func queryInfoOutputToResult(logOutput *QueryLogOutput) *QueryResult {
 			if itemData["city"] != nil {
 				item.City = itemData["city"].(string)
 			}
+			if itemData["host"] != nil {
+				item.Host = itemData["host"].(string)
+			}
+			if itemData["remote_ip"] != nil {
+				item.RemoteIP = itemData["remote_ip"].(string)
+			}
 			itemList = append(itemList, item)
 		}
 	}

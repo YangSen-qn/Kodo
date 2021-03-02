@@ -13,8 +13,9 @@ const (
 )
 
 var (
-	resultSheetTitleStyle   *excel.CellStyle
-	resultSheetContentStyle *excel.CellStyle
+	resultSheetTitleStyle        *excel.CellStyle
+	whiteResultSheetContentStyle *excel.CellStyle
+	grayResultSheetContentStyle  *excel.CellStyle
 )
 
 func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem) error {
@@ -27,7 +28,7 @@ func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem
 	configResultSheet(sheet)
 
 	row := 1
-	titleList := []string{"IP", "国家", "区域", "城市", "数量"}
+	titleList := []string{"城市", "区域", "国家", "Host/IpType", "RemoteIP", "Host", "IP", "数量"}
 	for index, title := range titleList {
 		titleCell := &excel.Cell{
 			Row:    row,
@@ -40,23 +41,42 @@ func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem
 		_ = sheet.SetCell(titleCell)
 	}
 
-	for h, item := range items {
+	lastItemID := ""
+	lastItemIDFirstRow := row
+	for _, item := range items {
+		row++
+
 		if item == nil {
 			continue
 		}
-		itemInfo := []interface{}{item.IP, item.Country, item.Region, item.City, item.Count}
+		id := item.Position()
+		remoteNetworkType := item.RemoteNetworkType()
+		itemInfo := []interface{}{item.City, item.Region, item.Country, remoteNetworkType, item.RemoteIP, item.Host, item.IP, item.Count}
 
+		widthList := []float64{8, 8, 8, 17, 25, 20, 25, 8}
 		for v, title := range itemInfo {
 			titleCell := &excel.Cell{
-				Row:    h + row + 1,
+				Row:    row,
 				Column: v,
 				Value:  title,
-				Style:  resultSheetContentStyle,
-				Width:  resultSheetContentWidth,
+				Style:  whiteResultSheetContentStyle,
+				Width:  widthList[v],
 				Height: resultSheetContentHeight,
 			}
 			_ = sheet.SetCell(titleCell)
 		}
+
+		if lastItemID != id {
+			if len(lastItemID) != 0 && row != (lastItemIDFirstRow+1) {
+				_ = sheet.MergeCell(0, lastItemIDFirstRow, 0, row-1)
+				_ = sheet.SetCellStyle(0, lastItemIDFirstRow, len(titleList)-1, row-1, getNextContentBgStyle())
+			} else {
+				_ = sheet.SetCellStyle(0, lastItemIDFirstRow, len(titleList)-1, row-1, getNextContentBgStyle())
+			}
+			lastItemIDFirstRow = row
+		}
+
+		lastItemID = id
 	}
 
 	return sheet.SaveAs(fileName)
@@ -76,11 +96,34 @@ func configResultSheet(sheet *excel.Sheet) {
 			excel.PatternOption(1)))
 	_ = sheet.AddCellStyle(resultSheetTitleStyle)
 
-	resultSheetContentStyle = excel.NewCellStyle()
-	resultSheetContentStyle.SetCellStyle(
+	whiteResultSheetContentStyle = excel.NewCellStyle()
+	whiteResultSheetContentStyle.SetCellStyle(
 		excel.FontStyle(excel.ColorOption("#777777"),
 			excel.SizeOption(13), ),
 		excel.AlignmentStyle(excel.HorizontalOption(excel.StringCenter),
 			excel.VerticalOption(excel.StringCenter)))
-	_ = sheet.AddCellStyle(resultSheetContentStyle)
+	_ = sheet.AddCellStyle(whiteResultSheetContentStyle)
+
+	grayResultSheetContentStyle = excel.NewCellStyle()
+	grayResultSheetContentStyle.SetCellStyle(
+		excel.FontStyle(excel.ColorOption("#777777"),
+			excel.SizeOption(13), ),
+		excel.AlignmentStyle(excel.HorizontalOption(excel.StringCenter),
+			excel.VerticalOption(excel.StringCenter)),
+		excel.FillStyle(excel.TypeOption(excel.StringPattern),
+			excel.ColorsOption("#EEEEEE"),
+			excel.PatternOption(1)))
+	_ = sheet.AddCellStyle(grayResultSheetContentStyle)
+}
+
+var bgStyleSetCount = 0
+
+func getNextContentBgStyle() *excel.CellStyle {
+	if bgStyleSetCount%2 == 0 {
+		bgStyleSetCount++
+		return whiteResultSheetContentStyle
+	} else {
+		bgStyleSetCount++
+		return grayResultSheetContentStyle
+	}
 }

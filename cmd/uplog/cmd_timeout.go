@@ -22,6 +22,20 @@ type timeoutCMDPerformer struct {
 	sk              string
 }
 
+func TestCMD() {
+	p := &timeoutCMDPerformer{
+		excelDir:        "/Users/senyang/Desktop/",
+		startTimeString: "2021-02-28 23:00:00",
+		endTimeString:   "2021-03-01 00:00:00",
+	}
+	p.execute(nil, nil)
+}
+
+type timeoutResultGroup struct {
+	count int
+	group map[string]*log.QueryResultItem
+}
+
 func ConfigTimeoutCMD(superCMD *cobra.Command) {
 
 	performer := &timeoutCMDPerformer{}
@@ -89,41 +103,72 @@ func (performer *timeoutCMDPerformer) queryByQueryString(startTime, endTime int6
 
 	go log.QueryInfoOfCannotConnectToServer(param, partResultChan, errorResultChan)
 
-	itemsInfo := make(map[string]*log.QueryResultItem)
+	excelRowCount := 0 // excel 行数
 	index := 0
+	result := make(map[string]*timeoutResultGroup)
 	for partResult := range partResultChan {
 		if partResult.AllItems() == nil || len(partResult.AllItems()) == 0 {
 			continue
 		}
 		for _, item := range partResult.AllItems() {
 
-			if len(item.IP) > 0 {
-				oldItem := itemsInfo[item.IP]
+			itemKey := item.Position()
+			if len(itemKey) > 0 {
+				group := result[itemKey]
+				if group == nil {
+					group = &timeoutResultGroup{
+						count: 0,
+						group: make(map[string]*log.QueryResultItem),
+					}
+					result[itemKey] = group
+				}
+
+				itemRemoteNetworkType := item.RemoteNetworkType()
+				oldItem := group.group[itemRemoteNetworkType]
 				if oldItem == nil {
-					oldItem = item
-					itemsInfo[oldItem.IP] = oldItem
+					excelRowCount++
+					group.count++
+					group.group[itemRemoteNetworkType] = item
 				} else {
+					group.count++
 					oldItem.Count += 1
 				}
 			}
 
 			index++
-			output.InfoStringFormat("item:%s index:%d\n", item, index)
+			output.InfoStringFormat("item:%s index:%d/total:%d\n", item, index, partResult.TotalCount())
 		}
 
 	}
 
-	items := make([]*log.QueryResultItem, 0, len(itemsInfo))
-
-	for _, value := range itemsInfo {
-		items = append(items, value)
-	}
-
-	sort.Slice(items, func(i, j int) bool {
-		return items[i].Count > items[j].Count
-	})
-
 	if len(performer.excelDir) > 0 {
+		items := make([]*log.QueryResultItem, 0, excelRowCount)
+
+		// 根据 Position 对应所有 item 数量进行排序
+		groupList := make([]*timeoutResultGroup, 0, len(result))
+		for _, group := range result {
+			groupList = append(groupList, group)
+		}
+		sort.Slice(groupList, func(i, j int) bool {
+			return groupList[i].count > groupList[j].count
+		})
+
+		// 从排完序的 group 中读取 items 依次排序并加入 items 中
+		for _, group := range groupList{
+
+			// 获取 groupItems 并排序
+			groupItems := make([]*log.QueryResultItem, 0, len(group.group))
+			for _, item := range group.group{
+				groupItems = append(groupItems, item)
+			}
+			sort.Slice(groupItems, func(i, j int) bool {
+				return groupItems[i].Count > groupItems[j].Count
+			})
+
+			// 添加到 items 中
+			items = append(items, groupItems...)
+		}
+
 		err := saveResultItemsToLocalAsExcel(filepath.Join(performer.excelDir, "timeout.xlsx"), items)
 		if err != nil {
 			output.InfoStringFormat("save error:%s", err)

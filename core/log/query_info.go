@@ -1,9 +1,9 @@
 package log
 
 func QueryInfoOfCannotConnectToServer(param *QueryParam, partResultChan chan<- *QueryResult, errorResultChan chan<- error) {
-	param.QueryString = QueryTypeQueryString(param.SDKVersion,
+	param.QueryString = QueryTypeRequestQueryString(param.SDKVersion,
 		param.SDKType,
-		[]string{QS_ResultTimeout, QS_ResultCannotConnectToHost, QS_ResultUnknownHost, QS_ResultNetworkError})
+		[]string{QS_Timeout, QS_CannotConnectToHost, QS_UnknownHost, QS_NetworkError})
 	QueryInfo(param, partResultChan, errorResultChan)
 }
 

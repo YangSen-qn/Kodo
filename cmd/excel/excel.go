@@ -98,6 +98,12 @@ func (sheet *Sheet) MergeCell(fromColumn, fromRow, toColumn, toRow int) error {
 	return sheet.file.MergeCell(sheet.name, fromAxis, toAxis)
 }
 
+func (sheet *Sheet) SetCellStyle(fromColumn, fromRow, toColumn, toRow int, style *CellStyle) error {
+	fromAxis := getExcelCellColumnString(fromColumn) + strconv.Itoa(fromRow)
+	toAxis := getExcelCellColumnString(toColumn) + strconv.Itoa(toRow)
+	return sheet.file.SetCellStyle(sheet.name, fromAxis, toAxis, style.id)
+}
+
 func (sheet *Sheet) AddCellStyle(style *CellStyle) error {
 	id, err := sheet.file.NewStyle(style.style)
 	if err != nil {
