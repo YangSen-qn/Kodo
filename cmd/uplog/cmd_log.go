@@ -1,7 +1,7 @@
 package uplog
 
 import (
-	"github.com/YangSen-qn/Kodo/cmd/config"
+	"github.com/YangSen-qn/Kodo/cmd/common"
 	"path/filepath"
 	"strings"
 
@@ -12,7 +12,7 @@ import (
 )
 
 type upLogPerformer struct {
-	config          *config.ConfigPerformer
+	config          *common.CommonPerformer
 	excelDir        string
 	iOSEnable       bool
 	androidEnable   bool
@@ -28,7 +28,7 @@ type upLogPerformer struct {
 
 func NewIPPerformer() *upLogPerformer {
 	return &upLogPerformer{
-		config: config.NewPerformer(),
+		config: common.NewPerformer(),
 	}
 }
 

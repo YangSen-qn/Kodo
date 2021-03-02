@@ -1,19 +1,19 @@
 package ip
 
 import (
-	"github.com/YangSen-qn/Kodo/cmd/config"
+	"github.com/YangSen-qn/Kodo/cmd/common"
 	"github.com/YangSen-qn/Kodo/cmd/output"
 	"github.com/YangSen-qn/Kodo/core/util"
 	"github.com/spf13/cobra"
 )
 
 type IPPerformer struct {
-	config *config.ConfigPerformer
+	config *common.CommonPerformer
 }
 
 func NewIPPerformer() *IPPerformer {
 	return &IPPerformer{
-		config:config.NewPerformer(),
+		config: common.NewPerformer(),
 	}
 }
 

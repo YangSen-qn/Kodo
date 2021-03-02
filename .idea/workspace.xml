@@ -2,20 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="428925a6-7017-4093-8908-bd4414be723e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/cmd/ip/cmd.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/output/human.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/output/json.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/output/output.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/output/output.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/root/root.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/root/root.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/split/cmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/split/cmd.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/common/common.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/ip/cmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/ip/cmd.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/uplog/cmd_log.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/uplog/cmd_log.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/uplog/cmd_timeout.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/uplog/cmd_timeout.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/uplog/output.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/uplog/output.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/util/ip.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/util/ip.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../KodoLog/kodo_log/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/../KodoLog/kodo_log/config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../KodoLog/kodo_log/query.go" beforeDir="false" afterPath="$PROJECT_DIR$/../KodoLog/kodo_log/query.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../cmd/.idea/.gitignore" beforeDir="false" />

@@ -1,7 +1,7 @@
 package uplog
 
 import (
-	"github.com/YangSen-qn/Kodo/cmd/config"
+	"github.com/YangSen-qn/Kodo/cmd/common"
 	"github.com/YangSen-qn/Kodo/cmd/output"
 	"github.com/YangSen-qn/Kodo/core/log"
 	"github.com/YangSen-qn/Kodo/core/util"
@@ -12,7 +12,7 @@ import (
 )
 
 type timeoutCMDPerformer struct {
-	config          *config.ConfigPerformer
+	config          *common.CommonPerformer
 	excelDir        string
 	iOSEnable       bool
 	androidEnable   bool
@@ -31,7 +31,7 @@ type timeoutResultGroup struct {
 
 func NewTimeoutPerformer() *timeoutCMDPerformer {
 	return &timeoutCMDPerformer{
-		config: config.NewPerformer(),
+		config: common.NewPerformer(),
 	}
 }
 
