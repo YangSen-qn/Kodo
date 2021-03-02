@@ -1,6 +1,7 @@
 package uplog
 
 import (
+	"github.com/YangSen-qn/Kodo/cmd/config"
 	"github.com/YangSen-qn/Kodo/cmd/output"
 	"github.com/YangSen-qn/Kodo/core/log"
 	"github.com/YangSen-qn/Kodo/core/util"
@@ -11,6 +12,7 @@ import (
 )
 
 type timeoutCMDPerformer struct {
+	config          *config.ConfigPerformer
 	excelDir        string
 	iOSEnable       bool
 	androidEnable   bool
@@ -22,37 +24,35 @@ type timeoutCMDPerformer struct {
 	sk              string
 }
 
-func TestCMD() {
-	p := &timeoutCMDPerformer{
-		excelDir:        "/Users/senyang/Desktop/",
-		startTimeString: "2021-02-28 23:00:00",
-		endTimeString:   "2021-03-01 00:00:00",
-	}
-	p.execute(nil, nil)
-}
-
 type timeoutResultGroup struct {
 	count int
 	group map[string]*log.QueryResultItem
 }
 
+func NewTimeoutPerformer() *timeoutCMDPerformer {
+	return &timeoutCMDPerformer{
+		config: config.NewPerformer(),
+	}
+}
+
 func ConfigTimeoutCMD(superCMD *cobra.Command) {
 
-	performer := &timeoutCMDPerformer{}
+	performer := NewTimeoutPerformer()
 
 	cmd := &cobra.Command{
 		Use:     "timeout",
 		Short:   "get timeout error info",
 		Long:    "",
 		Example: "",
-		Run:     performer.execute,
+		Run:     performer.Execute,
 	}
 
-	bindNetworkCMDToPerformer(cmd, performer)
+	performer.config.BindToCMD(cmd)
+	performer.BindToCMD(cmd)
 	superCMD.AddCommand(cmd)
 }
 
-func bindNetworkCMDToPerformer(command *cobra.Command, performer *timeoutCMDPerformer) {
+func (performer *timeoutCMDPerformer) BindToCMD(command *cobra.Command) {
 	command.Flags().StringVarP(&performer.excelDir, "save-file", "o", "", "query result save dir")
 	command.Flags().BoolVarP(&performer.iOSEnable, "iOS", "", false, "query iOS result, query iOS And Android if both iOS And Android not set")
 	command.Flags().BoolVarP(&performer.androidEnable, "Android", "", false, "query Android result, query iOS And Android if both iOS And Android not set")
@@ -64,7 +64,7 @@ func bindNetworkCMDToPerformer(command *cobra.Command, performer *timeoutCMDPerf
 	command.Flags().StringVarP(&performer.sk, "sk", "", "", "user secret key, default use kodo when not set")
 }
 
-func (performer *timeoutCMDPerformer) execute(cmd *cobra.Command, args []string) {
+func (performer *timeoutCMDPerformer) Execute(cmd *cobra.Command, args []string) {
 	performer.sdkVersion = strings.ReplaceAll(performer.sdkVersion, " ", "")
 	if len(performer.sdkVersion) == 0 {
 		performer.sdkVersion = allTimeoutVersion
@@ -136,11 +136,12 @@ func (performer *timeoutCMDPerformer) queryByQueryString(startTime, endTime int6
 			}
 
 			index++
-			output.InfoStringFormat("item:%s index:%d/total:%d\n", item, index, partResult.TotalCount())
+			output.W().OutputFormat("item:%s index:%d/total:%d\n", item, index, partResult.TotalCount())
 		}
 
 	}
 
+	output.I().OutputFormat("save path %s", performer.excelDir)
 	if len(performer.excelDir) > 0 {
 		items := make([]*log.QueryResultItem, 0, excelRowCount)
 
@@ -171,7 +172,7 @@ func (performer *timeoutCMDPerformer) queryByQueryString(startTime, endTime int6
 
 		err := saveResultItemsToLocalAsExcel(filepath.Join(performer.excelDir, "timeout.xlsx"), items)
 		if err != nil {
-			output.InfoStringFormat("save error:%s", err)
+			output.I().OutputFormat("save error:%s", err)
 		}
 	}
 }

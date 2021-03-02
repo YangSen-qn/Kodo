@@ -8,17 +8,17 @@ import (
 
 func outputTitleInfo(title string) {
 	style := output.NewOutputMessageStyle().Color(output.PrintForegroundColorGreen)
-	output.InfoStringFormatWithStyle(style, title, ":\n")
+	output.I().OutputFormatWithStyle(style, title, ":\n")
 }
 
 func outputVersionTitle(title string) {
 	style := output.NewOutputMessageStyle().Color(output.PrintForegroundColorGreen)
-	output.InfoStringFormatWithStyle(style, "============================= "+title+" =============================\n")
+	output.I().OutputFormatWithStyle(style, "============================= "+title+" =============================\n")
 }
 
 func outputContentInfo(content string) {
 	style := output.NewOutputMessageStyle().Color(output.PrintForegroundColorYellow)
-	output.InfoStringFormatWithStyle(style, content, "\n")
+	output.I().OutputFormatWithStyle(style, content, "\n")
 }
 
 func outputLogResult(result string, count int, percent float64) {
@@ -27,14 +27,14 @@ func outputLogResult(result string, count int, percent float64) {
 	percentLabelStyle := output.NewOutputMessageStyle().Width(9).Color(output.PrintForegroundColorWhite)
 	percentContentStyle := output.NewOutputMessageStyle().Width(9).Color(output.PrintForegroundColorYellow)
 
-	output.InfoStringFormatWithStyle(resultLabelStyle, result+":")
-	output.InfoStringFormatWithStyle(resultContentStyle, strconv.Itoa(count))
+	output.I().OutputFormatWithStyle(resultLabelStyle, result+":")
+	output.I().OutputFormatWithStyle(resultContentStyle, strconv.Itoa(count))
 
 	if percent >= 0 {
-		output.InfoStringFormatWithStyle(percentLabelStyle, "percent:")
-		output.InfoStringFormatWithStyle(percentContentStyle, "%.4f%%", percent*100)
+		output.I().OutputFormatWithStyle(percentLabelStyle, "percent:")
+		output.I().OutputFormatWithStyle(percentContentStyle, "%.4f%%", percent*100)
 	}
-	output.InfoStringFormat("\n")
+	output.I().Output("\n")
 }
 
 // 输出多个 Version 整体信息

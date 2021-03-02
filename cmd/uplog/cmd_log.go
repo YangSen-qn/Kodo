@@ -1,6 +1,7 @@
 package uplog
 
 import (
+	"github.com/YangSen-qn/Kodo/cmd/config"
 	"path/filepath"
 	"strings"
 
@@ -10,7 +11,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type logCMDPerformer struct {
+type upLogPerformer struct {
+	config          *config.ConfigPerformer
 	excelDir        string
 	iOSEnable       bool
 	androidEnable   bool
@@ -24,23 +26,30 @@ type logCMDPerformer struct {
 	sk              string
 }
 
+func NewIPPerformer() *upLogPerformer {
+	return &upLogPerformer{
+		config: config.NewPerformer(),
+	}
+}
+
 func ConfigCMD(superCMD *cobra.Command) {
 
-	performer := &logCMDPerformer{}
+	performer := NewIPPerformer()
 
 	cmd := &cobra.Command{
 		Use:     "uplog",
 		Short:   "query uplog",
 		Long:    "",
 		Example: "",
-		Run:     performer.execute,
+		Run:     performer.Execute,
 	}
 
-	bindLogCMDToPerformer(cmd, performer)
+	performer.BindLogCMDToPerformer(cmd)
+
 	superCMD.AddCommand(cmd)
 }
 
-func bindLogCMDToPerformer(command *cobra.Command, performer *logCMDPerformer) {
+func (performer *upLogPerformer) BindLogCMDToPerformer(command *cobra.Command) {
 	command.Flags().StringVarP(&performer.excelDir, "save-file", "o", "", "query result save dir")
 	command.Flags().BoolVarP(&performer.iOSEnable, "iOS", "", false, "query iOS result, query iOS And Android if both iOS And Android not set")
 	command.Flags().BoolVarP(&performer.androidEnable, "Android", "", false, "query Android result, query iOS And Android if both iOS And Android not set")
@@ -54,7 +63,7 @@ func bindLogCMDToPerformer(command *cobra.Command, performer *logCMDPerformer) {
 	command.Flags().StringVarP(&performer.sk, "sk", "", "", "user secret key, default use kodo when not set")
 }
 
-func (performer *logCMDPerformer) execute(cmd *cobra.Command, args []string) {
+func (performer *upLogPerformer) Execute(cmd *cobra.Command, args []string) {
 	performer.sdkVersion = strings.ReplaceAll(performer.sdkVersion, " ", "")
 	if len(performer.sdkVersion) == 0 {
 		if performer.iOSEnable && performer.androidEnable {
@@ -90,7 +99,7 @@ func (performer *logCMDPerformer) execute(cmd *cobra.Command, args []string) {
 	}
 }
 
-func (performer *logCMDPerformer) queryByQueryString(startTime, endTime int64) {
+func (performer *upLogPerformer) queryByQueryString(startTime, endTime int64) {
 	param := &log.QueryParam{
 		SDKType:     0,
 		SDKVersion:  performer.sdkVersion,
@@ -101,13 +110,19 @@ func (performer *logCMDPerformer) queryByQueryString(startTime, endTime int64) {
 		AK:          performer.ak,
 		SK:          performer.sk,
 	}
+
 	result, err := log.QueryByQueryString(param)
-	output.Err(err)
-	output.InfoStringFormat("count:", result.TotalCount())
+
+	if err != nil {
+		output.E(err)
+		return
+	}
+
+	output.I().OutputFormat("count:%d", result.TotalCount())
 }
 
 // query version
-func (performer *logCMDPerformer) queryVersions(startTime, endTime int64) {
+func (performer *upLogPerformer) queryVersions(startTime, endTime int64) {
 	var versionArray []string
 	if strings.Contains(performer.sdkVersion, ",") {
 		versionArray = strings.Split(performer.sdkVersion, ",")
@@ -144,7 +159,7 @@ func (performer *logCMDPerformer) queryVersions(startTime, endTime int64) {
 	}
 }
 
-func (performer *logCMDPerformer) querySomeVersion(paramList []*log.QueryParam, types []string) {
+func (performer *upLogPerformer) querySomeVersion(paramList []*log.QueryParam, types []string) {
 
 	if paramList == nil || len(paramList) == 0 {
 		return

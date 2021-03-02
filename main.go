@@ -1,14 +1,12 @@
 package main
 
 import (
-	"github.com/YangSen-qn/Kodo/cmd/uplog"
+	"fmt"
+	"github.com/YangSen-qn/Kodo/cmd/root"
 )
 
 func main() {
-
-	uplog.TestCMD()
-
-	//if err := root.LoadCMD(); err != nil {
-	//	fmt.Println("error:", err)
-	//}
+	if err := root.LoadCMD(); err != nil {
+		fmt.Println("error:", err)
+	}
 }

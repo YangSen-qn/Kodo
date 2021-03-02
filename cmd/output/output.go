@@ -1,11 +1,8 @@
 package output
 
-import (
-	"encoding/json"
-	"fmt"
-)
+import "fmt"
 
-var globalOutput IOutput = &DefaultOutput{IsColorful:true}
+var globalOutput IOutput = &DefaultOutput{IsColorful: true}
 
 func SetOutput(output IOutput) {
 	globalOutput = output
@@ -45,138 +42,67 @@ func (style OutputMessageStyle) Color(c int) OutputMessageStyle {
 	return style
 }
 
-type IOutputMessage interface {
-	fmt.Stringer
-}
-
-// --- string output message
-type stringMessage struct {
-	Info string `json:"info"`
-}
-
-func (s *stringMessage) String() string {
-	return s.Info
-}
-
-func StringOutputMessage(format string, args ...interface{}) IOutputMessage {
-	info := fmt.Sprintf(format, args...)
-	return &stringMessage{Info: info}
-}
-
-// --- error output message
-type errorIOutputMessage struct {
-	Error string `json:"error"`
-}
-
-func (e errorIOutputMessage) String() string {
-	return e.Error
-}
-
-func ErrorOutputMessage(err error) IOutputMessage {
-	return &errorIOutputMessage{Error: err.Error()}
-}
-
 // --- output
 type IOutput interface {
-	Output(messageLevel OutputMessageLevel, messageStyle OutputMessageStyle, message IOutputMessage)
+	Output(messageLevel OutputMessageLevel, messageStyle OutputMessageStyle, message interface{})
 }
 
-func Info(message IOutputMessage) {
-	InfoWithStyle(message, NewOutputMessageStyle())
+type OutputInfo struct {
+	level OutputMessageLevel
 }
 
-func InfoStringFormat(format string, args ...interface{}) {
-	InfoWithStyle(StringOutputMessage(format, args...), NewOutputMessageStyle())
+func I() *OutputInfo {
+	return &OutputInfo{
+		level: OutputMessageLevelInfo,
+	}
 }
 
-func InfoStringFormatWithStyle(messageStyle OutputMessageStyle, format string, args ...interface{}) {
-	InfoWithStyle(StringOutputMessage(format, args...), messageStyle)
+func D() *OutputInfo {
+	return &OutputInfo{
+		level: OutputMessageLevelDebug,
+	}
 }
 
-func InfoWithStyle(message IOutputMessage, messageStyle OutputMessageStyle) {
+func W() *OutputInfo {
+	return &OutputInfo{
+		level: OutputMessageLevelWarning,
+	}
+}
+
+func E(err error) {
+	o := &OutputInfo{
+		level: OutputMessageLevelWarning,
+	}
+	o.Output(ErrorMessage(err))
+}
+
+func (o *OutputInfo) Output(message interface{}) {
+	o.OutputWithStyle(NewOutputMessageStyle(), message)
+}
+
+func (o *OutputInfo) OutputWithStyle(messageStyle OutputMessageStyle, message interface{}) {
 	if message != nil {
 		globalOutput.Output(OutputMessageLevelInfo, messageStyle, message)
 	}
 }
 
-func Debug(message IOutputMessage) {
-	DebugWithStyle(message, NewOutputMessageStyle())
+func (o *OutputInfo) OutputFormat(format string, args ...interface{}) {
+	o.OutputFormatWithStyle(NewOutputMessageStyle(), format, args...)
 }
 
-func DebugStringFormat(format string, args ...interface{}) {
-	DebugWithStyle(StringOutputMessage(format, args...), NewOutputMessageStyle())
+func (o *OutputInfo) OutputFormatWithStyle(messageStyle OutputMessageStyle, format string, args ...interface{}) {
+	o.OutputWithStyle(messageStyle, fmt.Sprintf(format, args...))
 }
 
-func DebugStringFormatWithStyle(messageStyle OutputMessageStyle, format string, args ...interface{}) {
-	DebugWithStyle(StringOutputMessage(format, args...), messageStyle)
+// --- error output message
+type errorMessage struct {
+	Error string `json:"error"`
 }
 
-func DebugWithStyle(message IOutputMessage, messageStyle OutputMessageStyle) {
-	if message != nil {
-		globalOutput.Output(OutputMessageLevelDebug, messageStyle, message)
-	}
+func (e *errorMessage) String() string {
+	return e.Error
 }
 
-func Warning(message IOutputMessage) {
-	WarningWithStyle(message, NewOutputMessageStyle())
-}
-
-func WarningStringFormat(format string, args ...interface{}) {
-	WarningWithStyle(StringOutputMessage(format, args...), NewOutputMessageStyle())
-}
-
-func WarningStringFormatWithStyle(messageStyle OutputMessageStyle, format string, args ...interface{}) {
-	WarningWithStyle(StringOutputMessage(format, args...), messageStyle)
-}
-
-func WarningWithStyle(message IOutputMessage, messageStyle OutputMessageStyle) {
-	if message != nil {
-		globalOutput.Output(OutputMessageLevelWarning, messageStyle, message)
-	}
-}
-
-func Err(err error) {
-	if err != nil {
-		globalOutput.Output(OutputMessageLevelError, NewOutputMessageStyle(), ErrorOutputMessage(err))
-	}
-}
-
-// --- json
-type JsonOutput struct {
-	pretty bool
-}
-
-func (o *JsonOutput) Output(messageLevel OutputMessageLevel, messageStyle OutputMessageStyle, message IOutputMessage) {
-
-	msg := ""
-	msgByte, err := json.Marshal(message)
-	if err == nil {
-		msg = string(msgByte)
-	}
-
-	fmt.Println(msg)
-	format := NewPrintFormat()
-	format.IsColorful = false
-	printBeautiful(msg, format)
-}
-
-// --- default
-type DefaultOutput struct {
-	IsColorful bool
-}
-
-func (output *DefaultOutput) Output(messageLevel OutputMessageLevel, messageStyle OutputMessageStyle, message IOutputMessage) {
-
-	format := NewPrintFormat()
-	format.IsColorful = output.IsColorful
-	format.width = messageStyle.width
-	msg := message.String()
-	if messageLevel == OutputMessageLevelWarning {
-		format.ForegroundColor = PrintForegroundColorYellow
-	} else if messageLevel == OutputMessageLevelError {
-		format.ForegroundColor = PrintForegroundColorRed
-	} else {
-		format.ForegroundColor = messageStyle.color
-	}
-	printBeautiful(msg, format)
+func ErrorMessage(err error) interface{} {
+	return &errorMessage{Error: err.Error()}
 }

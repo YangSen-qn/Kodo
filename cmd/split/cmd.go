@@ -6,30 +6,37 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type cmdPerformer struct {
+type SplitPerformer struct {
 	filePath  string
 	separator string
 }
 
+func NewSplitPerformer() *SplitPerformer {
+	return &SplitPerformer{}
+}
+
 func ConfigCMD(superCMD *cobra.Command) {
 
-	performer := &cmdPerformer{}
+	performer := NewSplitPerformer()
 
 	cmd := &cobra.Command{
 		Use:   "split",
 		Short: "split string",
-		Run:   performer.execute,
+		Run:   performer.Execute,
 	}
 
-	cmd.Flags().StringVarP(&performer.filePath, "file", "f", "", "cut string from file")
-	cmd.Flags().StringVarP(&performer.separator, "separator", "s", "", "the separator string that cut by")
-
+	performer.BindToCMD(cmd)
 	superCMD.AddCommand(cmd)
 }
 
-func (performer *cmdPerformer) execute(cmd *cobra.Command, args []string) {
+func (performer *SplitPerformer) BindToCMD(cmd *cobra.Command) {
+	cmd.Flags().StringVarP(&performer.filePath, "file", "f", "", "cut string from file")
+	cmd.Flags().StringVarP(&performer.separator, "separator", "s", "", "the separator string that cut by")
+}
+
+func (performer *SplitPerformer) Execute(cmd *cobra.Command, args []string) {
 	if len(performer.separator) == 0 {
-		output.WarningStringFormat("the separator string can not be empty\n")
+		output.W().OutputFormat("the separator string can not be empty\n")
 		return
 	}
 
@@ -49,16 +56,16 @@ func (performer *cmdPerformer) execute(cmd *cobra.Command, args []string) {
 					complete = true
 					break
 				}
-				output.InfoStringFormat("%s\n", s)
+				output.I().OutputFormat("%s\n", s)
 			default:
 			}
 		}
 	} else if len(args) > 0 {
 		result := util.Split(args[0], performer.separator)
 		for _, s := range result {
-			output.InfoStringFormat("%s\n", s)
+			output.I().OutputFormat("%s\n", s)
 		}
 	} else {
-		output.WarningStringFormat("the string that cut is empty\n")
+		output.W().OutputFormat("the string that cut is empty\n")
 	}
 }

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/ipipdotnet/ipdb-go"
 )
 
 func GetIPType(ip string) string {
@@ -14,6 +16,30 @@ func GetIPType(ip string) string {
 	} else {
 		return ip
 	}
+}
+
+func IsIPV4(ip string) bool {
+	if !strings.Contains(ip, ".") {
+		return false
+	}
+
+	if l := strings.Split(ip,"."); len(l) != 4 {
+		return false
+	}
+
+	return true
+}
+
+func IsIPV6(ip string) bool {
+	if !strings.Contains(ip, ":") {
+		return false
+	}
+
+	if l := strings.Split(ip,":"); len(l) < 3 && len(l) > 8 {
+		return false
+	}
+
+	return true
 }
 
 func getIPV4Type(ip string) string {
@@ -76,4 +102,32 @@ func getIPV6Type(ip string) string {
 	}
 
 	return "ipv6-" + strings.Join(ipV6AllNums[0:2], "-")
+}
+
+func GetPositionByIP(ip string) (map[string]string, error) {
+
+	dbPath := ""
+	if IsIPV4(ip) {
+		dbPath = getPositionIPV4Path()
+	} else {
+		dbPath = getPositionIPV6Path()
+	}
+
+	db, err := ipdb.NewCity(dbPath)
+	if err != nil {
+		return nil, err
+	}
+	if db == nil {
+		return nil, err
+	}
+	return db.FindMap(ip, "CN")
+}
+
+
+func getPositionIPV4Path() string {
+	return "/Users/senyang/go/pkg/mod/github.com/ipipdotnet/ipdb-go@v1.3.1/city.free.ipdb"
+}
+
+func getPositionIPV6Path() string {
+	return "/Users/senyang/Desktop/ipv6.ipdb"
 }
