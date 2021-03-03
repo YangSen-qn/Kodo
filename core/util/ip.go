@@ -119,7 +119,6 @@ func GetPositionByIP(ip string) (map[string]string, error) {
 	} else {
 		data = []byte(ipv6Data)
 	}
-	fmt.Println("len:", len(data))
 
 	db, err := ipdb.NewCityWithData(data)
 	if err != nil {
