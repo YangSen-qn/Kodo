@@ -96,11 +96,11 @@ func Fill(color string) excelize.Fill {
 
 // alignment:
 const (
-	AlignmentCenter = "center"
-	AlignmentLeft   = "left"
-	AlignmentRight  = "right"
-	AlignmentTop    = "top"
-	AlignmentBottom = "bottom"
+	AlignmentCenter          = "center"
+	AlignmentHorizontalLeft  = "left"
+	AlignmentHorizontalRight = "right"
+	AlignmentVerticalTop     = "top"
+	AlignmentVerticalBottom  = "bottom"
 )
 
 func Alignment(horizontal, vertical string) *excelize.Alignment {

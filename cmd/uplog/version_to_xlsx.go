@@ -100,9 +100,9 @@ func configVersionSheet(sheet *excel.Sheet) {
 	titleFill := excel.Fill("#FFFF88")
 	titleFont := excel.BoldFont(14, "")
 	contentFont := excel.Font(13, "")
-	leftAlignment := excel.Alignment(excel.AlignmentLeft, excel.AlignmentCenter)
+	leftAlignment := excel.Alignment(excel.AlignmentHorizontalLeft, excel.AlignmentCenter)
 	centerAlignment := excel.Alignment(excel.AlignmentCenter, excel.AlignmentCenter)
-	rightAlignment := excel.Alignment(excel.AlignmentRight, excel.AlignmentCenter)
+	rightAlignment := excel.Alignment(excel.AlignmentHorizontalRight, excel.AlignmentCenter)
 
 	titleCellStyle := &excelize.Style{
 		Border:        defaultBorder,
