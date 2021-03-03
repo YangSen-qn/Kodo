@@ -2,6 +2,7 @@ package uplog
 
 import (
 	"fmt"
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/YangSen-qn/Kodo/cmd/excel"
 	"github.com/YangSen-qn/Kodo/core/log"
 )
@@ -22,11 +23,11 @@ const (
 )
 
 var (
-	emptyCellStyle   *excel.CellStyle
-	titleCellStyle   *excel.CellStyle
-	nameCellStyle    *excel.CellStyle
-	countCellStyle   *excel.CellStyle
-	percentCellStyle *excel.CellStyle
+	emptyCellStyleId   = -1
+	titleCellStyleId   = -1
+	nameCellStyleId    = -1
+	countCellStyleId   = -1
+	percentCellStyleId = -1
 )
 
 func saveVersionToLocalAsExcel(fileName string, sdkName string, allVersionLogCount int, versionList [] *log.QueryResultVersion, types []string) {
@@ -94,46 +95,42 @@ func saveVersionToLocalAsExcel(fileName string, sdkName string, allVersionLogCou
 
 func configVersionSheet(sheet *excel.Sheet) {
 
-	titleCellStyle = excel.NewCellStyle()
-	titleCellStyle.SetCellStyle(
-		excel.FontStyle(excel.BoldOption(true),
-			excel.ItalicOption(true),
-			excel.FamilyOption(excel.StringTimes),
-			excel.ColorOption("#777777"),
-			excel.SizeOption(14), ),
-		excel.AlignmentStyle(excel.HorizontalOption(excel.StringCenter),
-			excel.VerticalOption(excel.StringCenter)),
-		excel.FillStyle(excel.TypeOption(excel.StringPattern),
-			excel.ColorsOption("#FFFF88"),
-			excel.PatternOption(1)))
-	_ = sheet.AddCellStyle(titleCellStyle)
+	borderColor := "#DDDDDD"
+	defaultBorder := excel.Border(borderColor, borderColor, borderColor, borderColor)
+	titleFill := excel.Fill("#FFFF88")
+	titleFont := excel.BoldFont(14, "")
+	contentFont := excel.Font(13, "")
+	leftAlignment := excel.Alignment(excel.AlignmentLeft, excel.AlignmentCenter)
+	centerAlignment := excel.Alignment(excel.AlignmentCenter, excel.AlignmentCenter)
+	rightAlignment := excel.Alignment(excel.AlignmentRight, excel.AlignmentCenter)
 
-	nameCellStyle = excel.NewCellStyle()
-	nameCellStyle.SetCellStyle(
-		excel.FontStyle(excel.ItalicOption(true),
-			excel.FamilyOption(excel.StringTimes),
-			excel.ColorOption("#777777"),
-			excel.SizeOption(14), ),
-		excel.AlignmentStyle(excel.HorizontalOption(excel.StringLeft),
-			excel.VerticalOption(excel.StringCenter)))
-	_ = sheet.AddCellStyle(nameCellStyle)
+	titleCellStyle := &excelize.Style{
+		Border:        defaultBorder,
+		Fill:          titleFill,
+		Font:          titleFont,
+		Alignment:     centerAlignment,
+	}
+	titleCellStyleId, _ = sheet.AddCellStyle(titleCellStyle)
 
-	countCellStyle = excel.NewCellStyle()
-	countCellStyle.SetCellStyle(
-		excel.FontStyle(excel.ItalicOption(true),
-			excel.FamilyOption(excel.StringTimes),
-			excel.ColorOption("#777777"),
-			excel.SizeOption(14), ),
-		excel.AlignmentStyle(excel.HorizontalOption(excel.StringRight),
-			excel.VerticalOption(excel.StringCenter)))
-	_ = sheet.AddCellStyle(countCellStyle)
+	nameCellStyle := &excelize.Style{
+		Border:        defaultBorder,
+		Font:          contentFont,
+		Alignment:     leftAlignment,
+	}
+	nameCellStyleId, _ = sheet.AddCellStyle(nameCellStyle)
 
-	percentCellStyle = countCellStyle
+	countCellStyle := &excelize.Style{
+		Border:        defaultBorder,
+		Font:          contentFont,
+		Alignment:     rightAlignment,
+	}
+	countCellStyleId, _ = sheet.AddCellStyle(countCellStyle)
+	percentCellStyleId = countCellStyleId
 }
 
 func newCell(typeId int, row int, column int, value interface{}) *excel.Cell {
 
-	var style *excel.CellStyle = nil
+	var styleId = -1
 
 	cellWidth := 0.0
 	cellHeight := 0.0
@@ -141,30 +138,30 @@ func newCell(typeId int, row int, column int, value interface{}) *excel.Cell {
 		cellWidth = emptyCellWidth
 		cellHeight = defaultCellHeight
 	} else if typeId == excelCellTypeTitle {
-		style = titleCellStyle
+		styleId = titleCellStyleId
 		cellWidth = titleCellWidth
 		cellHeight = defaultCellHeight
 	} else if typeId == excelCellTypeName {
-		style = nameCellStyle
+		styleId = nameCellStyleId
 		cellWidth = nameCellWidth
 		cellHeight = defaultCellHeight
 	} else if typeId == excelCellTypeCount {
-		style = countCellStyle
+		styleId = countCellStyleId
 		cellWidth = countCellWidth
 		cellHeight = defaultCellHeight
 	} else {
-		style = percentCellStyle
+		styleId = percentCellStyleId
 		cellWidth = percentCellWidth
 		cellHeight = defaultCellHeight
 	}
 
 	return &excel.Cell{
-		Row:    row,
-		Column: column,
-		Value:  value,
-		Style:  style,
-		Width:  cellWidth,
-		Height: cellHeight,
+		Row:     row,
+		Column:  column,
+		Value:   value,
+		StyleId: styleId,
+		Width:   cellWidth,
+		Height:  cellHeight,
 	}
 }
 

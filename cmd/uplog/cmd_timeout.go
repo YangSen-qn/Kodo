@@ -141,7 +141,6 @@ func (performer *timeoutCMDPerformer) queryByQueryString(startTime, endTime int6
 
 	}
 
-	output.I().OutputFormat("save path %s", performer.excelDir)
 	if len(performer.excelDir) > 0 {
 		items := make([]*log.QueryResultItem, 0, excelRowCount)
 

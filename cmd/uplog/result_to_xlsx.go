@@ -1,6 +1,7 @@
 package uplog
 
 import (
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/YangSen-qn/Kodo/cmd/excel"
 	"github.com/YangSen-qn/Kodo/core/log"
 )
@@ -13,9 +14,9 @@ const (
 )
 
 var (
-	resultSheetTitleStyle        *excel.CellStyle
-	whiteResultSheetContentStyle *excel.CellStyle
-	grayResultSheetContentStyle  *excel.CellStyle
+	resultSheetTitleStyleId        = -1
+	whiteResultSheetContentStyleId = -1
+	grayResultSheetContentStyleId  = -1
 )
 
 func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem) error {
@@ -32,12 +33,12 @@ func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem
 		"ISP", "RemoteIP", "Host", "IP", "数量"}
 	for index, title := range titleList {
 		titleCell := &excel.Cell{
-			Row:    row,
-			Column: index,
-			Value:  title,
-			Style:  resultSheetTitleStyle,
-			Width:  resultSheetTitleWidth,
-			Height: resultSheetTitleHeight,
+			Row:     row,
+			Column:  index,
+			Value:   title,
+			StyleId: resultSheetTitleStyleId,
+			Width:   resultSheetTitleWidth,
+			Height:  resultSheetTitleHeight,
 		}
 		_ = sheet.SetCell(titleCell)
 	}
@@ -58,12 +59,12 @@ func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem
 		widthList := []float64{15, 8, 8, 17, 8, 25, 20, 25, 8}
 		for v, title := range itemInfo {
 			titleCell := &excel.Cell{
-				Row:    row,
-				Column: v,
-				Value:  title,
-				Style:  whiteResultSheetContentStyle,
-				Width:  widthList[v],
-				Height: resultSheetContentHeight,
+				Row:     row,
+				Column:  v,
+				Value:   title,
+				StyleId: whiteResultSheetContentStyleId,
+				Width:   widthList[v],
+				Height:  resultSheetContentHeight,
 			}
 			_ = sheet.SetCell(titleCell)
 		}
@@ -88,46 +89,48 @@ func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem
 
 func configResultSheet(sheet *excel.Sheet) {
 
-	resultSheetTitleStyle = excel.NewCellStyle()
-	resultSheetTitleStyle.SetCellStyle(
-		excel.FontStyle(excel.BoldOption(true),
-			excel.ColorOption("#777777"),
-			excel.SizeOption(14), ),
-		excel.AlignmentStyle(excel.HorizontalOption(excel.StringCenter),
-			excel.VerticalOption(excel.StringCenter)),
-		excel.FillStyle(excel.TypeOption(excel.StringPattern),
-			excel.ColorsOption("#FFFF88"),
-			excel.PatternOption(1)))
-	_ = sheet.AddCellStyle(resultSheetTitleStyle)
+	borderColor := "#DDDDDD"
+	defaultBorder := excel.Border(borderColor, borderColor, borderColor, borderColor)
+	titleFill := excel.Fill("#FFFF88")
+	whiteFill := excel.Fill("#FFFFFF")
+	grayFill := excel.Fill("#EEEEEE")
+	titleFont  := excel.BoldFont(14, "")
+	contentFont  := excel.Font(13, "")
+	centerAlignment := excel.Alignment(excel.AlignmentCenter, excel.AlignmentCenter)
 
-	whiteResultSheetContentStyle = excel.NewCellStyle()
-	whiteResultSheetContentStyle.SetCellStyle(
-		excel.FontStyle(excel.ColorOption("#777777"),
-			excel.SizeOption(13), ),
-		excel.AlignmentStyle(excel.HorizontalOption(excel.StringCenter),
-			excel.VerticalOption(excel.StringCenter)))
-	_ = sheet.AddCellStyle(whiteResultSheetContentStyle)
+	resultSheetTitleStyle := &excelize.Style{
+		Border:        defaultBorder,
+		Fill:          titleFill,
+		Font:          titleFont,
+		Alignment:     centerAlignment,
+	}
+	resultSheetTitleStyleId, _ = sheet.AddCellStyle(resultSheetTitleStyle)
 
-	grayResultSheetContentStyle = excel.NewCellStyle()
-	grayResultSheetContentStyle.SetCellStyle(
-		excel.FontStyle(excel.ColorOption("#777777"),
-			excel.SizeOption(13), ),
-		excel.AlignmentStyle(excel.HorizontalOption(excel.StringCenter),
-			excel.VerticalOption(excel.StringCenter)),
-		excel.FillStyle(excel.TypeOption(excel.StringPattern),
-			excel.ColorsOption("#EEEEEE"),
-			excel.PatternOption(1)))
-	_ = sheet.AddCellStyle(grayResultSheetContentStyle)
+	whiteResultSheetContentStyle := &excelize.Style{
+		Border:        defaultBorder,
+		Fill:          whiteFill,
+		Font:          contentFont,
+		Alignment:     centerAlignment,
+	}
+	whiteResultSheetContentStyleId,_ = sheet.AddCellStyle(whiteResultSheetContentStyle)
+
+	grayResultSheetContentStyle := &excelize.Style{
+		Border:        defaultBorder,
+		Fill:          grayFill,
+		Font:          contentFont,
+		Alignment:     centerAlignment,
+	}
+	grayResultSheetContentStyleId, _ = sheet.AddCellStyle(grayResultSheetContentStyle)
 }
 
 var bgStyleSetCount = 0
 
-func getNextContentBgStyle() *excel.CellStyle {
+func getNextContentBgStyle() int {
 	if bgStyleSetCount%2 == 0 {
 		bgStyleSetCount++
-		return whiteResultSheetContentStyle
+		return whiteResultSheetContentStyleId
 	} else {
 		bgStyleSetCount++
-		return grayResultSheetContentStyle
+		return grayResultSheetContentStyleId
 	}
 }

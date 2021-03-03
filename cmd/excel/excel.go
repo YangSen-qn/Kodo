@@ -2,18 +2,19 @@ package excel
 
 import (
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
+
 	"strconv"
 )
 
 // Sheet Cell
 type Cell struct {
-	Row    int
-	Column int
-	axis   string
-	Value  interface{}
-	Style  *CellStyle
-	Width  float64
-	Height float64
+	Row     int
+	Column  int
+	axis    string
+	Value   interface{}
+	StyleId int
+	Width   float64
+	Height  float64
 }
 
 func (cell *Cell) Axis() string {
@@ -85,8 +86,8 @@ func (sheet *Sheet) SetCell(cell *Cell) error {
 		err = sheet.file.SetRowHeight(sheet.name, cell.Row, cell.Height)
 	}
 
-	if err == nil && cell.Style != nil && cell.Style.id > 0 {
-		err = sheet.file.SetCellStyle(sheet.name, axis, axis, cell.Style.id)
+	if err == nil && cell.StyleId > 0 {
+		err = sheet.file.SetCellStyle(sheet.name, axis, axis, cell.StyleId)
 	}
 
 	return err
@@ -98,19 +99,14 @@ func (sheet *Sheet) MergeCell(fromColumn, fromRow, toColumn, toRow int) error {
 	return sheet.file.MergeCell(sheet.name, fromAxis, toAxis)
 }
 
-func (sheet *Sheet) SetCellStyle(fromColumn, fromRow, toColumn, toRow int, style *CellStyle) error {
+func (sheet *Sheet) SetCellStyle(fromColumn, fromRow, toColumn, toRow int, styleId int) error {
 	fromAxis := getExcelCellColumnString(fromColumn) + strconv.Itoa(fromRow)
 	toAxis := getExcelCellColumnString(toColumn) + strconv.Itoa(toRow)
-	return sheet.file.SetCellStyle(sheet.name, fromAxis, toAxis, style.id)
+	return sheet.file.SetCellStyle(sheet.name, fromAxis, toAxis, styleId)
 }
 
-func (sheet *Sheet) AddCellStyle(style *CellStyle) error {
-	id, err := sheet.file.NewStyle(style.style)
-	if err != nil {
-		return err
-	}
-	style.id = id
-	return nil
+func (sheet *Sheet) AddCellStyle(style interface{}) (int, error) {
+	return sheet.file.NewStyle(style)
 }
 
 func (sheet *Sheet) SaveAs(fileName string) error {

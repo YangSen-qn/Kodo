@@ -1,8 +1,7 @@
 package excel
 
 import (
-	"fmt"
-	"strings"
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 )
 
 // Excel Cell style
@@ -16,152 +15,104 @@ fontStyle := `"font":{"bold":false,"italic":true,"family":"Times","size":14,"col
 	yellowFillStyle := `"fill":{"type":"pattern","color":["#FFFF88"],"pattern":1}`
 */
 
-type CellStyle struct {
-	id    int
-	style string
-}
-
-func NewCellStyle() *CellStyle {
-	return &CellStyle{id: -1}
-}
-
-type Style string
-type Option string
-
-func joinOptions(options ...Option) string {
-	optionsReal := make([]string, 0, len(options))
-	for _, option := range options {
-		if len(option) > 0 {
-			optionsReal = append(optionsReal, string(option))
-		}
-	}
-	return strings.Join(optionsReal, ",")
-}
-
-// font style
-func BoldOption(enable bool) Option {
-	if enable {
-		return `"bold":true`
-	} else {
-		return `"bold":false`
-	}
-}
-
-func ItalicOption(enable bool) Option {
-	if enable {
-		return `"italic":true`
-	} else {
-		return `"italic":false`
-	}
-}
-
+// border:
 const (
-	StringTimes Style = "Times"
+	BorderTypeLeft         = "left"
+	BorderTypeRight        = "right"
+	BorderTypeTop          = "top"
+	BorderTypeBottom       = "bottom"
+	BorderTypeDiagonalDown = "diagonalDown"
+	BorderTypeDiagonalUp   = "diagonalUp"
+
+	BorderStyle1 = 1 // 实细线
+	BorderStyle2 = 2 // 实粗线
+	BorderStyle3 = 3 // 半粗半细曲线
+	BorderStyle4 = 4 // 均细曲线
+	BorderStyle5 = 5 // 实粗线 比2粗
+	BorderStyle6 = 6 // 双实线
+	BorderStyle7 = 7 // 虚粗线
 )
 
-func FamilyOption(family Style) Option {
-	return Option(fmt.Sprintf(`"family":"%s"`, family))
-}
-
-func SizeOption(size int) Option {
-	return Option(fmt.Sprintf(`"size":%d`, size))
-}
-
-func ColorOption(color string) Option {
-	return Option(fmt.Sprintf(`"color":"%s"`, color))
-}
-
-func FontStyle(options ...Option) Style {
-	styleString := joinOptions(options...)
-	if len(styleString) == 0 {
-		return ""
-	} else {
-		return Style(`"font":{` + styleString + `}`)
+func Border(topColor, leftColor, bottomColor, rightColor string) []excelize.Border {
+	return []excelize.Border{
+		{Type: BorderTypeLeft, Color: leftColor, Style: BorderStyle1},
+		{Type: BorderTypeRight, Color: rightColor, Style: BorderStyle1},
+		{Type: BorderTypeTop, Color: topColor, Style: BorderStyle1},
+		{Type: BorderTypeBottom, Color: bottomColor, Style: BorderStyle1},
 	}
 }
 
-// alignment style
+// font:
 const (
-	StringLeft   Option = "left"
-	StringRight  Option = "right"
-	StringCenter Option = "center"
-	StringTop    Option = "top"
-	StringBottom Option = "bottom"
+	FontFamilyTimeTimesNewRoman = "Times New Roman"
 )
 
-func HorizontalOption(alignment Option) Option {
-	return Option(fmt.Sprintf(`"horizontal":"%s"`, alignment))
-}
-
-func VerticalOption(alignment Option) Option {
-	return Option(fmt.Sprintf(`"vertical":"%s"`, alignment))
-}
-
-func AlignmentStyle(options ...Option) Style {
-	optionString := joinOptions(options...)
-	if len(optionString) == 0 {
-		return ""
-	} else {
-		return Style(`"alignment":{` + optionString + `}`)
+func Font(size float64, color string) *excelize.Font {
+	if len(color) == 0 {
+		color = "#777777"
+	}
+	return &excelize.Font{
+		Bold:      false,
+		Italic:    false,
+		Underline: "",
+		Family:    FontFamilyTimeTimesNewRoman,
+		Size:      size,
+		Color:     color,
 	}
 }
 
-// fill style
-func PatternOption(pattern int) Option {
-	return Option(fmt.Sprintf(`"pattern":%d`, pattern))
+func BoldFont(size float64, color string) *excelize.Font {
+	if len(color) == 0 {
+		color = "#777777"
+	}
+	return &excelize.Font{
+		Bold:      true,
+		Italic:    false,
+		Underline: "",
+		Family:    FontFamilyTimeTimesNewRoman,
+		Size:      size,
+		Color:     color,
+	}
 }
 
+// fill:
 const (
-	StringPattern Option = "pattern"
+	FillTypeGradient = "gradient"
+	FillTypePattern  = "pattern"
+
+	FillPattern1 = 1
+
+	FillShading0 = 0
 )
 
-func TypeOption(typeOption Option) Option {
-	return Option(fmt.Sprintf(`"type":"%s"`, typeOption))
-}
-
-func FillStyle(options ...Option) Style {
-	optionString := joinOptions(options...)
-	if len(optionString) == 0 {
-		return ""
-	} else {
-		return Style(`"fill":{` + optionString + `}`)
+func Fill(color string) excelize.Fill {
+	return excelize.Fill{
+		Type:    FillTypePattern,
+		Pattern: FillPattern1,
+		Color:   []string{color},
+		Shading: FillShading0,
 	}
 }
 
-// border style
-func ColorsOption(colors ...string) Option {
-	colorOptions := make([]Option, len(colors))
-	for _, color := range colors {
-		color = `"` + color + `"`
-		colorOptions = append(colorOptions, Option(color))
+// alignment:
+const (
+	AlignmentCenter = "center"
+	AlignmentLeft   = "left"
+	AlignmentRight  = "right"
+	AlignmentTop    = "top"
+	AlignmentBottom = "bottom"
+)
+
+func Alignment(horizontal, vertical string) *excelize.Alignment {
+	return &excelize.Alignment{
+		Horizontal:      horizontal,
+		Indent:          0,
+		JustifyLastLine: false,
+		ReadingOrder:    0,
+		RelativeIndent:  0,
+		ShrinkToFit:     false,
+		TextRotation:    0,
+		Vertical:        vertical,
+		WrapText:        false,
 	}
-	return Option(fmt.Sprintf(`"color":[%s]`, joinOptions(colorOptions...)))
-}
-
-func StyleOption(style int) Option {
-	return Option(fmt.Sprintf(`"style":"%d"`, style))
-}
-
-func BorderLineOption(options ...Option) Option {
-	optionString := joinOptions(options...)
-	return Option(fmt.Sprintf(`{%s}`, optionString))
-}
-
-func BorderStyle(options ...Option) Style {
-	optionString := joinOptions(options...)
-	if len(optionString) == 0 {
-		return ""
-	} else {
-		return Style(`"border":[` + optionString + `]`)
-	}
-}
-
-func (style *CellStyle) SetCellStyle(styles ...Style) {
-	stylesReal := make([]string, 0, len(styles))
-	for _, style := range styles {
-		if len(style) > 0 {
-			stylesReal = append(stylesReal, string(style))
-		}
-	}
-	style.style = "{" + strings.Join(stylesReal, ",") + "}"
 }
