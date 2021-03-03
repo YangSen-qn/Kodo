@@ -1,11 +1,12 @@
 package util
 
 import (
+	_ "embed"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/ipipdotnet/ipdb-go"
+	"github.com/YangSen-qn/ipdb-go"
 )
 
 func GetIPType(ip string) string {
@@ -104,16 +105,23 @@ func getIPV6Type(ip string) string {
 	return "ipv6-" + strings.Join(ipV6AllNums[0:2], "-")
 }
 
+//go:embed city.free.ipdb
+var ipv4Data string
+
+//go:embed ipv6.ipdb
+var ipv6Data string
+
 func GetPositionByIP(ip string) (map[string]string, error) {
 
-	dbPath := ""
+	var data []byte
 	if IsIPV4(ip) {
-		dbPath = getPositionIPV4Path()
+		data = []byte(ipv4Data)
 	} else {
-		dbPath = getPositionIPV6Path()
+		data = []byte(ipv6Data)
 	}
+	fmt.Println("len:", len(data))
 
-	db, err := ipdb.NewCity(dbPath)
+	db, err := ipdb.NewCityWithData(data)
 	if err != nil {
 		return nil, err
 	}
@@ -121,13 +129,4 @@ func GetPositionByIP(ip string) (map[string]string, error) {
 		return nil, err
 	}
 	return db.FindMap(ip, "CN")
-}
-
-
-func getPositionIPV4Path() string {
-	return "/Users/senyang/go/pkg/mod/github.com/ipipdotnet/ipdb-go@v1.3.1/city.free.ipdb"
-}
-
-func getPositionIPV6Path() string {
-	return "/Users/senyang/Desktop/ipv6.ipdb"
 }
