@@ -28,7 +28,8 @@ func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem
 	configResultSheet(sheet)
 
 	row := 1
-	titleList := []string{"城市", "区域", "国家", "Host/IpType", "RemoteIP", "Host", "IP", "数量"}
+	titleList := []string{"城市", "区域", "国家", "Host/IpType",
+		"ISP", "RemoteIP", "Host", "IP", "数量"}
 	for index, title := range titleList {
 		titleCell := &excel.Cell{
 			Row:    row,
@@ -51,9 +52,10 @@ func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem
 		}
 		id := item.Position()
 		remoteNetworkType := item.RemoteNetworkType()
-		itemInfo := []interface{}{item.City, item.Region, item.Country, remoteNetworkType, item.RemoteIP, item.Host, item.IP, item.Count}
+		itemInfo := []interface{}{item.City, item.Region, item.Country, remoteNetworkType, item.ISP,
+			item.RemoteIP, item.Host, item.IP, item.Count}
 
-		widthList := []float64{15, 8, 8, 17, 25, 20, 25, 8}
+		widthList := []float64{15, 8, 8, 17, 8, 25, 20, 25, 8}
 		for v, title := range itemInfo {
 			titleCell := &excel.Cell{
 				Row:    row,
