@@ -16,6 +16,7 @@ type QueryParam struct {
 	StartTime   int64
 	EndTime     int64
 	Size        int
+	UserId      string
 	QueryString string
 
 	AK string

@@ -17,6 +17,7 @@ type upLogPerformer struct {
 	iOSEnable       bool
 	androidEnable   bool
 	sdkVersion      string
+	userId          string
 	repoName        string
 	beforeMinute    int64
 	startTimeString string
@@ -54,6 +55,7 @@ func (performer *upLogPerformer) BindLogCMDToPerformer(command *cobra.Command) {
 	command.Flags().BoolVarP(&performer.iOSEnable, "iOS", "", false, "query iOS result, query iOS And Android if both iOS And Android not set")
 	command.Flags().BoolVarP(&performer.androidEnable, "Android", "", false, "query Android result, query iOS And Android if both iOS And Android not set")
 	command.Flags().StringVarP(&performer.sdkVersion, "sdk-version", "i", "", "sdk version of query, separate by ',' when have more than one")
+	command.Flags().StringVarP(&performer.userId, "user-id", "", "", "user id")
 	command.Flags().StringVarP(&performer.repoName, "repo", "", "", "repo name of query, default use kodo when not set")
 	command.Flags().Int64VarP(&performer.beforeMinute, "before", "b", 5, "query minutes before current time, default 5, when start-time or end-time was not set use this")
 	command.Flags().StringVarP(&performer.startTimeString, "start-time", "s", "", "query start time, eg:2020-11-22 00:00:00")
@@ -101,6 +103,7 @@ func (performer *upLogPerformer) Execute(cmd *cobra.Command, args []string) {
 
 func (performer *upLogPerformer) queryByQueryString(startTime, endTime int64) {
 	param := &log.QueryParam{
+		UserId:      performer.userId,
 		SDKType:     0,
 		SDKVersion:  performer.sdkVersion,
 		RepoName:    performer.repoName,
@@ -145,6 +148,7 @@ func (performer *upLogPerformer) queryVersions(startTime, endTime int64) {
 		paramList := []*log.QueryParam{}
 		for _, version := range versionArray {
 			param := &log.QueryParam{
+				UserId:     performer.userId,
 				SDKType:    queryType,
 				SDKVersion: version,
 				RepoName:   performer.repoName,

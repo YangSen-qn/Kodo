@@ -1,6 +1,7 @@
 package root
 
 import (
+	"github.com/YangSen-qn/Kodo/cmd/info"
 	"github.com/YangSen-qn/Kodo/cmd/ip"
 	"github.com/YangSen-qn/Kodo/cmd/split"
 	"github.com/YangSen-qn/Kodo/cmd/uplog"
@@ -18,6 +19,7 @@ func LoadCMD() error {
 	}
 
 	version.ConfigCMD(rootCMD)
+	info.ConfigCMD(rootCMD)
 	uplog.ConfigCMD(rootCMD)
 	uplog.ConfigTimeoutCMD(rootCMD)
 	ip.ConfigCMD(rootCMD)

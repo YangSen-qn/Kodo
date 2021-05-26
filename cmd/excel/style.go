@@ -4,17 +4,6 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 )
 
-// Excel Cell style
-/*
-fontStyle := `"font":{"bold":false,"italic":true,"family":"Times","size":14,"color":"#777777"}`
-	boldFontStyle := `"font":{"bold":true,"italic":true,"family":"Times","size":14,"color":"#777777"}`
-	leftAlignmentStyle := `"alignment":{"horizontal":"left","Vertical":"center"}`
-	centerAlignmentStyle := `"alignment":{"horizontal":"center","Vertical":"center"}`
-	rightAlignmentStyle := `"alignment":{"horizontal":"right","Vertical":"center"}`
-	borderStyle := `"border":[{"type":"left","color":"FF0000","style":1}, {"type":"top","color":"FF0000","style":1}, {"type":"right","color":"FF0000","style":1}, {"type":"bottom","color":"FF0000","style":1}]`
-	yellowFillStyle := `"fill":{"type":"pattern","color":["#FFFF88"],"pattern":1}`
-*/
-
 // border:
 const (
 	BorderTypeLeft         = "left"

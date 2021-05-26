@@ -82,17 +82,17 @@ func QueryType_Dns() []string {
 	}
 }
 
-func QueryTypeQualityQueryString(sdkVersion string, sdkType int, typeList []string) string {
-	typeQueryString := queryTypeQueryString(sdkVersion, sdkType, QS_Result, typeList)
+func QueryTypeQualityQueryString(userId string, sdkVersion string, sdkType int, typeList []string) string {
+	typeQueryString := queryTypeQueryString(userId, sdkVersion, sdkType, QS_Result, typeList)
 	return QS_LogTypeQuality + QS_And + typeQueryString
 }
 
-func QueryTypeRequestQueryString(sdkVersion string, sdkType int, typeList []string) string {
-	typeQueryString := queryTypeQueryString(sdkVersion, sdkType, QS_ErrorType, typeList)
+func QueryTypeRequestQueryString(userId string, sdkVersion string, sdkType int, typeList []string) string {
+	typeQueryString := queryTypeQueryString(userId, sdkVersion, sdkType, QS_ErrorType, typeList)
 	return QS_LogTypeRequest + QS_And + typeQueryString
 }
 
-func queryTypeQueryString(sdkVersion string, sdkType int, typePre string, typeList []string) string {
+func queryTypeQueryString(userId string, sdkVersion string, sdkType int, typePre string, typeList []string) string {
 	var agentAndVersion, defaultContent string
 	if sdkType == SDKTypeAndroid {
 		defaultContent = QS_AndroidDefault
@@ -117,6 +117,10 @@ func queryTypeQueryString(sdkVersion string, sdkType int, typePre string, typeLi
 	typeQueryString += ")"
 
 	typeQueryString = QS_LogVersion4 + QS_And + typeQueryString
+
+	if len(userId) > 0 {
+		typeQueryString = "uid:" + userId + QS_And + typeQueryString
+	}
 
 	if len(agentAndVersion) > 0 {
 		typeQueryString += QS_And + agentAndVersion

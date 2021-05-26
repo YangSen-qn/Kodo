@@ -17,6 +17,7 @@ type timeoutCMDPerformer struct {
 	iOSEnable       bool
 	androidEnable   bool
 	sdkVersion      string
+	userId          string
 	repoName        string
 	startTimeString string
 	endTimeString   string
@@ -57,6 +58,7 @@ func (performer *timeoutCMDPerformer) BindToCMD(command *cobra.Command) {
 	command.Flags().BoolVarP(&performer.iOSEnable, "iOS", "", false, "query iOS result, query iOS And Android if both iOS And Android not set")
 	command.Flags().BoolVarP(&performer.androidEnable, "Android", "", false, "query Android result, query iOS And Android if both iOS And Android not set")
 	command.Flags().StringVarP(&performer.sdkVersion, "sdk-version", "i", "", "sdk version of query, separate by ',' when have more than one")
+	command.Flags().StringVarP(&performer.userId, "user-id", "", "", "user id")
 	command.Flags().StringVarP(&performer.repoName, "repo", "", "", "repo name of query, default use kodo when not set")
 	command.Flags().StringVarP(&performer.startTimeString, "start-time", "s", "", "query start time, eg:2020-11-22 00:00:00")
 	command.Flags().StringVarP(&performer.endTimeString, "end-time", "e", "", "query end time, eg:2020-11-23 00:00:00")
@@ -89,6 +91,7 @@ func (performer *timeoutCMDPerformer) Execute(cmd *cobra.Command, args []string)
 
 func (performer *timeoutCMDPerformer) queryByQueryString(startTime, endTime int64) {
 	param := &log.QueryParam{
+		UserId:     performer.userId,
 		SDKType:    0,
 		SDKVersion: performer.sdkVersion,
 		RepoName:   performer.repoName,
@@ -154,11 +157,11 @@ func (performer *timeoutCMDPerformer) queryByQueryString(startTime, endTime int6
 		})
 
 		// 从排完序的 group 中读取 items 依次排序并加入 items 中
-		for _, group := range groupList{
+		for _, group := range groupList {
 
 			// 获取 groupItems 并排序
 			groupItems := make([]*log.QueryResultItem, 0, len(group.group))
-			for _, item := range group.group{
+			for _, item := range group.group {
 				groupItems = append(groupItems, item)
 			}
 			sort.Slice(groupItems, func(i, j int) bool {
