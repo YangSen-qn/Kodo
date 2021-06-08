@@ -48,9 +48,6 @@ func ConfigCMD(superCMD *cobra.Command) {
 
 	performer.BindLogCMDToPerformer(cmd)
 
-	ConfigTimeoutCMD(cmd)
-	ConfigAllTypeCMD(cmd)
-
 	superCMD.AddCommand(cmd)
 }
 

@@ -24,15 +24,15 @@ type allTypePerformer struct {
 	sk              string
 }
 
-func NewAllTypePerformer() *upLogPerformer {
-	return &upLogPerformer{
+func NewAllTypePerformer() *allTypePerformer {
+	return &allTypePerformer{
 		config: common.NewPerformer(),
 	}
 }
 
 func ConfigAllTypeCMD(superCMD *cobra.Command) {
 
-	performer := NewIPPerformer()
+	performer := NewAllTypePerformer()
 
 	cmd := &cobra.Command{
 		Use:     "allType",
@@ -52,7 +52,7 @@ func (performer *allTypePerformer) BindLogCMDToPerformer(command *cobra.Command)
 	command.Flags().StringVarP(&performer.startTimeString, "start-time", "s", "", "query start time, eg:2020-11-22 00:00:00")
 	command.Flags().StringVarP(&performer.endTimeString, "end-time", "e", "", "query end time, eg:2020-11-23 00:00:00")
 	command.Flags().StringVarP(&performer.queryString, "query", "", "", "user secret key, default use kodo when not set")
-	command.Flags().StringVarP(&performer.typeKeyList, "typeList", "", "", "type list, eg:[{"key":"version", "region":{"location":0,"length":2}}]")
+	command.Flags().StringVarP(&performer.typeKeyList, "typeList", "", "", `type list, eg:[{"key":"version", "region":{"location":0,"length":2}}]`)
 	command.Flags().StringVarP(&performer.ak, "ak", "", "", "user access key, default use kodo when not set")
 	command.Flags().StringVarP(&performer.sk, "sk", "", "", "user secret key, default use kodo when not set")
 }
@@ -86,9 +86,12 @@ func (performer *allTypePerformer) Execute(cmd *cobra.Command, args []string) {
 	}
 
 	param := &log.QueryParam{
+		RepoName:    performer.repoName,
 		StartTime:   startTime,
 		EndTime:     endTime,
 		QueryString: performer.queryString,
+		AK:          performer.ak,
+		SK:          performer.sk,
 	}
 
 	allType := log.QueryAllType(typeParamList, param)
