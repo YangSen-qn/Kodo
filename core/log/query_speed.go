@@ -1,5 +1,10 @@
 package log
 
+import (
+	"fmt"
+	"strings"
+)
+
 type QuerySpeedInfo struct {
 	Start int64
 	End   int64
@@ -55,23 +60,30 @@ func QuerySpeedOfDuration(param *QueryParam) QuerySpeedInfo {
 			)
 			if item.BytesSent > 0 {
 				size = float64(item.BytesSent)
-			} else if item.FileSize > 0 {
-				size = float64(item.FileSize)
 			} else {
 				continue
 			}
 
 			if item.Duration > 0 {
 				duration = float64(item.Duration)
+				if item.UpType == "jssdk-h5" || (strings.Contains(item.UserAgent, "Object-C") && duration < 1000) {
+					duration = duration * 1000
+				}
+			} else if item.TotalElapsedTime > 0 {
+				duration = float64(item.TotalElapsedTime)
 			} else {
 				continue
 			}
 
-			if item.UpType == "jssdk-h5" {
+			if duration < 500 {
 				duration = duration * 1000
 			}
 
 			speed := size / duration
+			if speed > 30240 {
+				fmt.Printf("Size:%.2f Duration:%.2f  UpType:%v Agent:%v\n", size, duration, item.UpType, item.UserAgent)
+				continue
+			}
 
 			if speedInfo.Speed == -1 {
 				speedInfo.Speed = speed

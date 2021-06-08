@@ -7,7 +7,7 @@ import (
 	"github.com/YangSen-qn/Kodo/cmd/uplog"
 )
 
-const _debug = true
+const _debug = false
 
 func main() {
 	if _debug {

@@ -26,23 +26,24 @@ const (
 )
 
 type QueryResultItem struct {
-	Count      int
-	RequestId  string `json:"req_id"`
-	UserAgent  string `json:"user_agent"`
-	Uid        int    `json:"uid"`
-	IP         string `json:"user_ip"`
-	Host       string `json:"host"`
-	RemoteIP   string `json:"remote_ip"`
-	ISP        string `json:"isp"`
-	Country    string `json:"country"`
-	Region     string `json:"region"`
-	City       string `json:"city"`
-	FileSize   int64  `json:"file_size"`
-	BytesSent  int64  `json:"bytes_sent"`
-	Duration   int64  `json:"duration"`
-	LogVersion int    `json:"log_version"`
-	StatusCode int    `json:"status_code"`
-	UpType     string `json:"up_type"`
+	Count            int
+	RequestId        string `json:"req_id"`
+	UserAgent        string `json:"user_agent"`
+	Uid              int    `json:"uid"`
+	IP               string `json:"user_ip"`
+	Host             string `json:"host"`
+	RemoteIP         string `json:"remote_ip"`
+	ISP              string `json:"isp"`
+	Country          string `json:"country"`
+	Region           string `json:"region"`
+	City             string `json:"city"`
+	FileSize         int64  `json:"file_size"`
+	BytesSent        int64  `json:"bytes_sent"`
+	Duration         int64  `json:"duration"`
+	TotalElapsedTime int64  `json:"total_elapsed_time"`
+	LogVersion       int    `json:"log_version"`
+	StatusCode       int    `json:"status_code"`
+	UpType           string `json:"up_type"`
 }
 
 func (item *QueryResultItem) String() string {
