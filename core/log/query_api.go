@@ -1,10 +1,12 @@
 package log
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/qiniu/pandora-go-sdk/base/config"
 	"strconv"
 	"time"
+
+	"github.com/qiniu/pandora-go-sdk/base/config"
 
 	. "github.com/qiniu/pandora-go-sdk/base"
 	. "github.com/qiniu/pandora-go-sdk/logdb"
@@ -51,7 +53,7 @@ func queryCountByParam(param QueryParam) (result *QueryResult, err error) {
 		WithDialTimeout(180 * time.Second).
 		WithResponseTimeout(180 * time.Second)
 
-	client, err := New(cfg);
+	client, err := New(cfg)
 	if err != nil {
 		return
 	}
@@ -127,7 +129,7 @@ func queryInfoSeparateByPage(param *QueryParam, partResultChan chan<- *QueryResu
 }
 
 func queryPartInfoInitByParam(param *QueryParam, config *config.Config) (scrollId string, result *QueryResult, err error) {
-	client, err := New(config);
+	client, err := New(config)
 	if err != nil {
 		return
 	}
@@ -150,7 +152,7 @@ func queryPartInfoInitByParam(param *QueryParam, config *config.Config) (scrollI
 }
 
 func queryLeftPartInfoByParam(scrollId string, param *QueryParam, config *config.Config) (newScrollId string, result *QueryResult, err error) {
-	client, err := New(config);
+	client, err := New(config)
 	if err != nil {
 		return
 	}
@@ -173,27 +175,15 @@ func queryInfoOutputToResult(logOutput *QueryLogOutput) *QueryResult {
 	if len(logOutput.Data) > 0 {
 		itemList = make([]*QueryResultItem, 0, len(logOutput.Data))
 		for _, itemData := range logOutput.Data {
-			item := &QueryResultItem{Count:1}
-			if itemData["user_ip"] != nil {
-				item.IP = itemData["user_ip"].(string)
+			item := &QueryResultItem{Count: 1}
+			itemBytes, err := json.Marshal(itemData)
+			if err != nil {
+				continue
 			}
-			if itemData["isp"] != nil {
-				item.ISP = itemData["isp"].(string)
-			}
-			if itemData["country"] != nil {
-				item.Country = itemData["country"].(string)
-			}
-			if itemData["region"] != nil {
-				item.Region = itemData["region"].(string)
-			}
-			if itemData["city"] != nil {
-				item.City = itemData["city"].(string)
-			}
-			if itemData["host"] != nil {
-				item.Host = itemData["host"].(string)
-			}
-			if itemData["remote_ip"] != nil {
-				item.RemoteIP = itemData["remote_ip"].(string)
+
+			err = json.Unmarshal(itemBytes, item)
+			if err != nil {
+				continue
 			}
 			itemList = append(itemList, item)
 		}

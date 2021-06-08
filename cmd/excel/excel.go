@@ -29,7 +29,27 @@ type Sheet struct {
 	name string
 }
 
-func NewSheet(filePath string, name string) *Sheet {
+func NewSheet(filePath string, name string) (*Sheet, error) {
+	if len(name) == 0 {
+		name = "Sheet1"
+	}
+
+	file, err := excelize.OpenFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	if file.GetSheetIndex(name) == -1 {
+		file.NewSheet(name)
+	}
+
+	return &Sheet{
+		file: file,
+		name: name,
+	}, nil
+}
+
+func NewSheetCreateWhileNotExist(filePath string, name string) *Sheet {
 	if len(name) == 0 {
 		name = "Sheet1"
 	}
@@ -64,6 +84,14 @@ func DeleteSheet(filePath string, name string) {
 	}
 }
 
+func (sheet *Sheet) SetCellValue(column string, row int, value interface{}) error {
+	return sheet.SetCell(&Cell{
+		Row:     row,
+		axis:    column + strconv.Itoa(row),
+		Value:   value,
+	})
+}
+
 func (sheet *Sheet) SetCell(cell *Cell) error {
 	var err error
 
@@ -93,6 +121,11 @@ func (sheet *Sheet) SetCell(cell *Cell) error {
 	return err
 }
 
+func (sheet *Sheet) GetCellValue(column string, row int) (string, error) {
+	axis := column + strconv.Itoa(row)
+	return sheet.file.GetCellValue(sheet.name, axis);
+}
+
 func (sheet *Sheet) MergeCell(fromColumn, fromRow, toColumn, toRow int) error {
 	fromAxis := getExcelCellColumnString(fromColumn) + strconv.Itoa(fromRow)
 	toAxis := getExcelCellColumnString(toColumn) + strconv.Itoa(toRow)
@@ -109,9 +142,19 @@ func (sheet *Sheet) AddCellStyle(style interface{}) (int, error) {
 	return sheet.file.NewStyle(style)
 }
 
+func (sheet *Sheet) MaxRows() (int, error) {
+	rows, err := sheet.file.GetRows(sheet.name)
+	return len(rows), err
+}
+
+func (sheet *Sheet) Save() error {
+	return sheet.file.Save()
+}
+
 func (sheet *Sheet) SaveAs(fileName string) error {
 	return sheet.file.SaveAs(fileName)
 }
+
 
 func getExcelCellColumnString(column int) string {
 

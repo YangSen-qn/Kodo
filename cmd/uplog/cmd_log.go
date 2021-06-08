@@ -1,9 +1,10 @@
 package uplog
 
 import (
-	"github.com/YangSen-qn/Kodo/cmd/common"
 	"path/filepath"
 	"strings"
+
+	"github.com/YangSen-qn/Kodo/cmd/common"
 
 	"github.com/YangSen-qn/Kodo/cmd/output"
 	"github.com/YangSen-qn/Kodo/core/log"
@@ -46,6 +47,9 @@ func ConfigCMD(superCMD *cobra.Command) {
 	}
 
 	performer.BindLogCMDToPerformer(cmd)
+
+	ConfigTimeoutCMD(cmd)
+	ConfigAllTypeCMD(cmd)
 
 	superCMD.AddCommand(cmd)
 }
@@ -170,7 +174,7 @@ func (performer *upLogPerformer) querySomeVersion(paramList []*log.QueryParam, t
 	}
 
 	var allVersionLogCount int = 0
-	resultVersionList := [] *log.QueryResultVersion{}
+	resultVersionList := []*log.QueryResultVersion{}
 	for _, param := range paramList {
 		resultVersion := log.QueryVersion(param, types)
 		allVersionLogCount += resultVersion.TotalCount()

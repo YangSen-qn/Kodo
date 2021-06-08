@@ -42,7 +42,7 @@ func saveVersionToLocalAsExcel(fileName string, sdkName string, allVersionLogCou
 	excel.DeleteSheet(fileName, "Sheet1")
 	excel.DeleteSheet(fileName, sheetName)
 
-	sheet := excel.NewSheet(fileName, sheetName)
+	sheet := excel.NewSheetCreateWhileNotExist(fileName, sheetName)
 	configVersionSheet(sheet)
 
 	for i, sdkVersionInfo := range versionList {

@@ -25,7 +25,7 @@ func saveResultItemsToLocalAsExcel(fileName string, items []*log.QueryResultItem
 		return nil
 	}
 
-	sheet := excel.NewSheet(fileName, "Sheet1")
+	sheet := excel.NewSheetCreateWhileNotExist(fileName, "Sheet1")
 	configResultSheet(sheet)
 
 	row := 1

@@ -1,6 +1,7 @@
 package root
 
 import (
+	"github.com/YangSen-qn/Kodo/cmd/excel_cmd"
 	"github.com/YangSen-qn/Kodo/cmd/info"
 	"github.com/YangSen-qn/Kodo/cmd/ip"
 	"github.com/YangSen-qn/Kodo/cmd/split"
@@ -21,8 +22,8 @@ func LoadCMD() error {
 	version.ConfigCMD(rootCMD)
 	info.ConfigCMD(rootCMD)
 	uplog.ConfigCMD(rootCMD)
-	uplog.ConfigTimeoutCMD(rootCMD)
 	ip.ConfigCMD(rootCMD)
 	split.ConfigCMD(rootCMD)
+	excel_cmd.ConfigCMD(rootCMD)
 	return rootCMD.Execute()
 }
