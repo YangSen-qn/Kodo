@@ -1,11 +1,14 @@
 package uplog
 
 import (
+	"errors"
 	"fmt"
+	"path/filepath"
 
 	"github.com/YangSen-qn/Kodo/cmd/excel"
 	"github.com/YangSen-qn/Kodo/core/log"
 	"github.com/YangSen-qn/Kodo/core/util"
+	"github.com/coreos/etcd/pkg/fileutil"
 )
 
 type SpeedXlsx struct {
@@ -16,11 +19,13 @@ type SpeedXlsx struct {
 }
 
 func NewSpeedXlsx(filePath, sheet string) *SpeedXlsx {
-	return &SpeedXlsx{
+	s := &SpeedXlsx{
 		filePath:   filePath,
 		sheetName:  sheet,
 		currentRow: 0,
 	}
+	s.Setup()
+	return s
 }
 
 func (s *SpeedXlsx) Setup() {
@@ -44,7 +49,11 @@ func (s *SpeedXlsx) Setup() {
 	s.save()
 }
 
-func (s *SpeedXlsx) Write(speedInfo log.QuerySpeedInfo) {
+func (s *SpeedXlsx) Write(speedInfo log.QuerySpeedInfo) error {
+	if err := s.createFileIfNotExist(); err != nil {
+		return err
+	}
+
 	start := util.GetDateStringWithTimestamp(speedInfo.Start)
 	end := util.GetDateStringWithTimestamp(speedInfo.End)
 	time := fmt.Sprintf("%v ~ %v", start, end)
@@ -54,24 +63,39 @@ func (s *SpeedXlsx) Write(speedInfo log.QuerySpeedInfo) {
 		Row:    s.currentRow,
 		Column: 0,
 		Value:  time,
-		Width:  80,
+		Width:  40,
 		Height: 15,
 	})
 
 	s.sheet.SetCell(&excel.Cell{
 		Row:    s.currentRow,
 		Column: 1,
-		Value:  time,
-		Width:  20,
+		Value:  speedInfo.Speed,
+		Width:  10,
 		Height: 15,
 	})
-	s.save()
+	return s.save()
 }
 
-func (s *SpeedXlsx) Compete() {
-	s.save()
+func (s *SpeedXlsx) Compete() error {
+	return s.save()
 }
 
-func (s *SpeedXlsx) save() {
-	s.sheet.Save()
+func (s *SpeedXlsx) save() error {
+	return s.sheet.SaveAs(s.filePath)
+}
+
+func (s *SpeedXlsx) createFileIfNotExist() error {
+	if len(s.filePath) == 0 {
+		return errors.New("file path is invalid")
+	}
+
+	dir := filepath.Dir(s.filePath)
+	if !fileutil.Exist(dir) {
+		if err := fileutil.CreateDirAll(dir); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

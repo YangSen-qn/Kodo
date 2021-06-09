@@ -114,7 +114,9 @@ func (performer *speedPerformer) Execute(cmd *cobra.Command, args []string) {
 		output.I().Output(logInfo)
 
 		if speedXlsx != nil {
-			speedXlsx.Write(speedInfo)
+			if err := speedXlsx.Write(speedInfo); err != nil {
+				output.E(errors.New("write err:" + err.Error()))
+			}
 		}
 	})
 
