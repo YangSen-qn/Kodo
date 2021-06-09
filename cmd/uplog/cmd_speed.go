@@ -27,6 +27,10 @@ type speedPerformer struct {
 	sk              string
 }
 
+const (
+	_defaultQueryString = `(up_type:"form" OR up_type:"mkblk" OR up_type:"bput" OR up_type:"upload_part") AND status_code:200`
+)
+
 func NewSpeedPerformer() *speedPerformer {
 	return &speedPerformer{
 		config: common.NewPerformer(),
@@ -86,17 +90,28 @@ func (performer *speedPerformer) Execute(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	output.D().Output("speed:\n")
+	queryString := performer.queryString
+	if len(queryString) == 0 {
+		queryString = _defaultQueryString
+	} else {
+		queryString += " AND " + _defaultQueryString
+	}
+
+	output.D().Output("speed param:\n")
 	output.D().Output("filePath:" + performer.filePath + "\n")
 	output.D().Output("fileName:" + performer.fileName + "\n")
 	output.D().Output("sheet   :" + performer.sheet + "\n")
 	output.D().Output("start   :" + performer.startTimeString + "\n")
 	output.D().Output("end     :" + performer.endTimeString + "\n")
+	output.D().Output("query   :" + queryString + "\n")
+	output.D().Output("\n")
+	output.D().Output("result:\n")
+
 	param := &log.QueryParam{
 		RepoName:    performer.repoName,
 		StartTime:   startTime,
 		EndTime:     endTime,
-		QueryString: performer.queryString,
+		QueryString: queryString,
 		AK:          performer.ak,
 		SK:          performer.sk,
 	}

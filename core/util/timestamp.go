@@ -6,7 +6,7 @@ import (
 
 func GetDateStringWithTimestamp(timestamp int64) string {
 	t := time.Unix(timestamp/1000, 0)
-	return t.Format("2006-01-02 03:04:05")
+	return t.Format("2006-01-02 15:04:05")
 }
 
 func GetTimestampByStringWithDefaultFormat(timeString string) int64 {
