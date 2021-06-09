@@ -41,6 +41,7 @@ func (s *SpeedXlsx) Setup() {
 		Width:  20,
 		Height: 15,
 	})
+	s.save()
 }
 
 func (s *SpeedXlsx) Write(speedInfo log.QuerySpeedInfo) {
@@ -64,8 +65,13 @@ func (s *SpeedXlsx) Write(speedInfo log.QuerySpeedInfo) {
 		Width:  20,
 		Height: 15,
 	})
+	s.save()
 }
 
 func (s *SpeedXlsx) Compete() {
+	s.save()
+}
+
+func (s *SpeedXlsx) save() {
 	s.sheet.Save()
 }

@@ -3,6 +3,7 @@ package uplog
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 
 	"github.com/YangSen-qn/Kodo/cmd/common"
 	"github.com/YangSen-qn/Kodo/cmd/output"
@@ -15,6 +16,7 @@ import (
 type speedPerformer struct {
 	config          *common.CommonPerformer
 	filePath        string
+	fileName        string
 	sheet           string
 	repoName        string
 	startTimeString string
@@ -50,6 +52,7 @@ func ConfigSpeedCMD(superCMD *cobra.Command) {
 
 func (performer *speedPerformer) BindLogCMDToPerformer(command *cobra.Command) {
 	command.Flags().StringVarP(&performer.filePath, "file-path", "", "", "file that result save to")
+	command.Flags().StringVarP(&performer.fileName, "file-name", "", "speed.xlsx", "file name that result save to, speed.xlsx")
 	command.Flags().StringVarP(&performer.sheet, "sheet", "", "sheet", "sheet that result save to, default sheet")
 	command.Flags().StringVarP(&performer.repoName, "repo", "", "", "repo name of query, default use kodo when not set")
 	command.Flags().StringVarP(&performer.startTimeString, "start-time", "s", "", "query start time, eg:2020-11-22 00:00:00")
@@ -61,10 +64,10 @@ func (performer *speedPerformer) BindLogCMDToPerformer(command *cobra.Command) {
 }
 
 func (performer *speedPerformer) Execute(cmd *cobra.Command, args []string) {
-	performer.startTimeString = "2021-06-05 00:00:00"
-	performer.endTimeString = "2021-06-08 00:00:00"
-	performer.interval = 5 * 60
-	performer.queryString = "uid:1380337015"
+	// performer.startTimeString = "2021-06-05 00:00:00"
+	// performer.endTimeString = "2021-06-08 00:00:00"
+	// performer.interval = 5 * 60
+	// performer.queryString = "uid:1380337015"
 
 	if performer.startTimeString == "" {
 		output.E(errors.New("start time can't empty"))
@@ -83,6 +86,12 @@ func (performer *speedPerformer) Execute(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	output.D().Output("speed:\n")
+	output.D().Output("filePath:" + performer.filePath + "\n")
+	output.D().Output("fileName:" + performer.fileName + "\n")
+	output.D().Output("sheet   :" + performer.sheet + "\n")
+	output.D().Output("start   :" + performer.startTimeString + "\n")
+	output.D().Output("end     :" + performer.endTimeString + "\n")
 	param := &log.QueryParam{
 		RepoName:    performer.repoName,
 		StartTime:   startTime,
@@ -94,7 +103,8 @@ func (performer *speedPerformer) Execute(cmd *cobra.Command, args []string) {
 
 	var speedXlsx *SpeedXlsx
 	if performer.filePath != "" {
-		speedXlsx = NewSpeedXlsx(performer.filePath, performer.sheet)
+		path := filepath.Join(performer.filePath, performer.fileName)
+		speedXlsx = NewSpeedXlsx(path, performer.sheet)
 	}
 
 	log.QuerySpeed(param, performer.interval*1000, func(speedInfo log.QuerySpeedInfo) {
