@@ -25,6 +25,7 @@ func LoadCMD() error {
 	uplog.ConfigTimeoutCMD(rootCMD)
 	uplog.ConfigAllTypeCMD(rootCMD)
 	uplog.ConfigSpeedCMD(rootCMD)
+	uplog.ConfigSuccessRateCMD(rootCMD)
 	ip.ConfigCMD(rootCMD)
 	split.ConfigCMD(rootCMD)
 	excel_cmd.ConfigCMD(rootCMD)

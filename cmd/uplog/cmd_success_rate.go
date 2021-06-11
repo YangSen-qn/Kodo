@@ -9,11 +9,10 @@ import (
 	"github.com/YangSen-qn/Kodo/cmd/output"
 	"github.com/YangSen-qn/Kodo/core/log"
 	"github.com/YangSen-qn/Kodo/core/util"
-
 	"github.com/spf13/cobra"
 )
 
-type speedPerformer struct {
+type successRatePerformer struct {
 	config          *common.CommonPerformer
 	filePath        string
 	fileName        string
@@ -27,23 +26,19 @@ type speedPerformer struct {
 	sk              string
 }
 
-const (
-	_defaultQueryString = `(up_type:"form" OR up_type:"mkblk" OR up_type:"bput" OR up_type:"upload_part" OR up_type:"jssdk-h5") AND status_code:200`
-)
-
-func NewSpeedPerformer() *speedPerformer {
-	return &speedPerformer{
+func NewSuccessRatePerformer() *successRatePerformer {
+	return &successRatePerformer{
 		config: common.NewPerformer(),
 	}
 }
 
-func ConfigSpeedCMD(superCMD *cobra.Command) {
+func ConfigSuccessRateCMD(superCMD *cobra.Command) {
 
-	performer := NewSpeedPerformer()
+	performer := NewSuccessRatePerformer()
 
 	cmd := &cobra.Command{
-		Use:     "speed",
-		Short:   "query all type",
+		Use:     "success-rate",
+		Short:   "query success rate by interval",
 		Long:    "",
 		Example: "",
 		Run:     performer.Execute,
@@ -54,7 +49,7 @@ func ConfigSpeedCMD(superCMD *cobra.Command) {
 	superCMD.AddCommand(cmd)
 }
 
-func (performer *speedPerformer) BindLogCMDToPerformer(command *cobra.Command) {
+func (performer *successRatePerformer) BindLogCMDToPerformer(command *cobra.Command) {
 	command.Flags().StringVarP(&performer.filePath, "file-path", "", "", "file that result save to")
 	command.Flags().StringVarP(&performer.fileName, "file-name", "", "speed.xlsx", "file name that result save to, speed.xlsx")
 	command.Flags().StringVarP(&performer.sheet, "sheet", "", "sheet", "sheet that result save to, default sheet")
@@ -67,7 +62,7 @@ func (performer *speedPerformer) BindLogCMDToPerformer(command *cobra.Command) {
 	command.Flags().StringVarP(&performer.sk, "sk", "", "", "user secret key, default use kodo when not set")
 }
 
-func (performer *speedPerformer) Execute(cmd *cobra.Command, args []string) {
+func (performer *successRatePerformer) Execute(cmd *cobra.Command, args []string) {
 	// performer.startTimeString = "2021-06-05 00:00:00"
 	// performer.endTimeString = "2021-06-08 00:00:00"
 	// performer.interval = 5 * 60
@@ -91,13 +86,8 @@ func (performer *speedPerformer) Execute(cmd *cobra.Command, args []string) {
 	}
 
 	queryString := performer.queryString
-	if len(queryString) == 0 {
-		queryString = _defaultQueryString
-	} else {
-		queryString += " AND " + _defaultQueryString
-	}
 
-	output.D().Output("speed param:\n")
+	output.D().Output("success rate param:\n")
 	output.D().Output("filePath:" + performer.filePath + "\n")
 	output.D().Output("fileName:" + performer.fileName + "\n")
 	output.D().Output("sheet   :" + performer.sheet + "\n")
@@ -116,26 +106,27 @@ func (performer *speedPerformer) Execute(cmd *cobra.Command, args []string) {
 		SK:          performer.sk,
 	}
 
-	var speedXlsx *SpeedXlsx
+	var xlsx *SuccessRateXlsx
 	if performer.filePath != "" {
 		path := filepath.Join(performer.filePath, performer.fileName)
-		speedXlsx = NewSpeedXlsx(path, performer.sheet)
+		xlsx = NewSuccessRateXlsx(path, performer.sheet)
 	}
 
-	log.QuerySpeed(param, performer.interval*1000, func(speedInfo log.QuerySpeedInfo) {
-		s := util.GetDateStringWithTimestamp(speedInfo.Start)
-		e := util.GetDateStringWithTimestamp(speedInfo.End)
-		logInfo := fmt.Sprintf("%v ~ %v speed:%.2fKB/S \n", s, e, speedInfo.Speed)
+	log.QuerySuccessRate(param, performer.interval*1000, func(successRateInfo log.QuerySuccessRateInfo) {
+
+		s := util.GetDateStringWithTimestamp(successRateInfo.Start)
+		e := util.GetDateStringWithTimestamp(successRateInfo.End)
+		logInfo := fmt.Sprintf("%v ~ %v All:%d Success:%d ServerRrror:%d \n", s, e, successRateInfo.AllCount, successRateInfo.SuccessCount, successRateInfo.ServerErrorCount)
 		output.I().Output(logInfo)
 
-		if speedXlsx != nil {
-			if err := speedXlsx.Write(speedInfo); err != nil {
+		if xlsx != nil {
+			if err := xlsx.Write(successRateInfo); err != nil {
 				output.E(errors.New("write err:" + err.Error()))
 			}
 		}
 	})
 
-	if speedXlsx != nil {
-		speedXlsx.Complete()
+	if xlsx != nil {
+		xlsx.Complete()
 	}
 }

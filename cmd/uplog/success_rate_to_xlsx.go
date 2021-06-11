@@ -11,15 +11,15 @@ import (
 	"github.com/coreos/etcd/pkg/fileutil"
 )
 
-type SpeedXlsx struct {
+type SuccessRateXlsx struct {
 	filePath   string
 	sheetName  string
 	currentRow int
 	sheet      *excel.Sheet
 }
 
-func NewSpeedXlsx(filePath, sheet string) *SpeedXlsx {
-	s := &SpeedXlsx{
+func NewSuccessRateXlsx(filePath, sheet string) *SuccessRateXlsx {
+	s := &SuccessRateXlsx{
 		filePath:   filePath,
 		sheetName:  sheet,
 		currentRow: 0,
@@ -28,7 +28,7 @@ func NewSpeedXlsx(filePath, sheet string) *SpeedXlsx {
 	return s
 }
 
-func (s *SpeedXlsx) Setup() {
+func (s *SuccessRateXlsx) Setup() {
 	s.sheet = excel.NewSheetCreateWhileNotExist(s.filePath, s.sheetName)
 	s.currentRow += 1
 	s.sheet.SetCell(&excel.Cell{
@@ -42,20 +42,37 @@ func (s *SpeedXlsx) Setup() {
 	s.sheet.SetCell(&excel.Cell{
 		Row:    s.currentRow,
 		Column: 1,
-		Value:  "速度(KB/S)",
+		Value:  "总量",
 		Width:  20,
 		Height: 15,
 	})
+
+	s.sheet.SetCell(&excel.Cell{
+		Row:    s.currentRow,
+		Column: 2,
+		Value:  "成功量",
+		Width:  20,
+		Height: 15,
+	})
+
+	s.sheet.SetCell(&excel.Cell{
+		Row:    s.currentRow,
+		Column: 3,
+		Value:  "服务异常量",
+		Width:  20,
+		Height: 15,
+	})
+
 	s.save()
 }
 
-func (s *SpeedXlsx) Write(speedInfo log.QuerySpeedInfo) error {
+func (s *SuccessRateXlsx) Write(info log.QuerySuccessRateInfo) error {
 	if err := s.createFileIfNotExist(); err != nil {
 		return err
 	}
 
-	start := util.GetDateStringWithTimestamp(speedInfo.Start)
-	end := util.GetDateStringWithTimestamp(speedInfo.End)
+	start := util.GetDateStringWithTimestamp(info.Start)
+	end := util.GetDateStringWithTimestamp(info.End)
 	time := fmt.Sprintf("%v ~ %v", start, end)
 
 	s.currentRow += 1
@@ -70,22 +87,41 @@ func (s *SpeedXlsx) Write(speedInfo log.QuerySpeedInfo) error {
 	s.sheet.SetCell(&excel.Cell{
 		Row:    s.currentRow,
 		Column: 1,
-		Value:  speedInfo.Speed,
+		Value:  info.AllCount,
 		Width:  10,
 		Height: 15,
 	})
+
+	successRow := fmt.Sprintf("%d(%.4f%%)", info.SuccessCount, float64(info.SuccessCount)/float64(info.SuccessCount))
+	s.sheet.SetCell(&excel.Cell{
+		Row:    s.currentRow,
+		Column: 2,
+		Value:  successRow,
+		Width:  10,
+		Height: 15,
+	})
+
+	serverErrorRow := fmt.Sprintf("%d(%.4f%%)", info.ServerErrorCount, float64(info.ServerErrorCount)/float64(info.SuccessCount))
+	s.sheet.SetCell(&excel.Cell{
+		Row:    s.currentRow,
+		Column: 3,
+		Value:  serverErrorRow,
+		Width:  10,
+		Height: 15,
+	})
+
 	return s.save()
 }
 
-func (s *SpeedXlsx) Complete() error {
+func (s *SuccessRateXlsx) Complete() error {
 	return s.save()
 }
 
-func (s *SpeedXlsx) save() error {
+func (s *SuccessRateXlsx) save() error {
 	return s.sheet.SaveAs(s.filePath)
 }
 
-func (s *SpeedXlsx) createFileIfNotExist() error {
+func (s *SuccessRateXlsx) createFileIfNotExist() error {
 	if len(s.filePath) == 0 {
 		return errors.New("file path is invalid")
 	}
