@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	_allQueryString         = `(up_type:"form" OR up_type:"mkfile" OR up_type:"jssdk-h5")`
+	_allQueryString         = `(up_type:"form" OR up_type:"mkfile" OR up_type:"mkfile" OR up_type:"complete_part" OR up_type:"jssdk-h5")`
 	_successQueryString     = _allQueryString + ` AND status_code:200`
 	_serverErrorQueryString = _allQueryString + ` AND status_code:>299`
 )
